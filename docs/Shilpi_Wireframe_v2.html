@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shilpi — Australian Property Transaction Platform</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{font-family:'Inter',system-ui,sans-serif;font-size:14px;color:#0F172A;background:#F8FAFC;display:flex}
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-thumb{background:#CBD5E1;border-radius:99px}
+button,select,input,textarea{font-family:inherit;font-size:13px;outline:none}
+:root{--navy:#1E3A5F;--blue:#2563EB;--blue-lt:#DBEAFE;--blue-mid:#93C5FD;--teal:#0F766E;--teal-lt:#CCFBF1;--green:#16A34A;--green-lt:#DCFCE7;--amber:#D97706;--amber-lt:#FEF3C7;--red:#DC2626;--red-lt:#FEE2E2;--purple:#7C3AED;--purple-lt:#EDE9FE;--g50:#F8FAFC;--g100:#F1F5F9;--g200:#E2E8F0;--g300:#CBD5E1;--g400:#94A3B8;--g500:#64748B;--g600:#475569;--g700:#334155;--g900:#0F172A}
+.sidebar{width:228px;flex-shrink:0;background:var(--navy);display:flex;flex-direction:column;height:100vh;overflow-y:auto}
+.logo{padding:18px 16px 14px;border-bottom:1px solid rgba(255,255,255,.1)}
+.logo-mark{display:flex;align-items:center;gap:10px;margin-bottom:3px}
+.logo-k{width:32px;height:32px;background:var(--blue);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:#fff}
+.logo-name{font-size:17px;font-weight:700;color:#fff}
+.logo-tag{font-size:10px;color:rgba(255,255,255,.35);margin-top:1px}
+.mode-bar{margin:12px 12px 4px;background:rgba(255,255,255,.07);border-radius:8px;display:flex;padding:3px;gap:2px}
+.mode-btn{flex:1;text-align:center;padding:5px 2px;border-radius:6px;font-size:11px;font-weight:500;color:rgba(255,255,255,.45);cursor:pointer;border:none;background:transparent;transition:.15s}
+.mode-btn.active{background:var(--blue);color:#fff}
+.ai-status{margin:8px 12px;background:rgba(124,58,237,.2);border:1px solid rgba(124,58,237,.3);border-radius:8px;padding:8px 10px}
+.ai-status-row{display:flex;align-items:center;gap:6px;font-size:11px;color:#C4B5FD}
+.ai-dot{width:6px;height:6px;border-radius:50%;background:#A78BFA;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.nav-group{padding:10px 12px 4px;font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.28)}
+.nav-item{display:flex;align-items:center;gap:9px;padding:7px 12px 7px 16px;margin:1px 6px;border-radius:8px;cursor:pointer;font-size:12.5px;font-weight:500;color:rgba(255,255,255,.6);transition:.15s;position:relative}
+.nav-item:hover{background:rgba(255,255,255,.08);color:#fff}
+.nav-item.active{background:rgba(37,99,235,.38);color:#fff}
+.nav-item.active::before{content:'';position:absolute;left:-6px;top:50%;transform:translateY(-50%);width:3px;height:18px;background:var(--blue-mid);border-radius:0 3px 3px 0}
+.nav-bdg{margin-left:auto;background:var(--red);color:#fff;border-radius:99px;font-size:10px;font-weight:600;padding:1px 6px;min-width:17px;text-align:center}
+.nav-ai{margin-left:auto;background:rgba(124,58,237,.35);color:#C4B5FD;border-radius:99px;font-size:9px;font-weight:600;padding:1px 6px}
+.sidebar-foot{margin-top:auto;padding:12px 16px;border-top:1px solid rgba(255,255,255,.07)}
+.user-row{display:flex;align-items:center;gap:9px}
+.user-av{width:30px;height:30px;border-radius:50%;background:var(--blue);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:#fff}
+.user-name{font-size:12px;font-weight:500;color:#fff}
+.user-role{font-size:10px;color:rgba(255,255,255,.35)}
+.main{flex:1;display:flex;flex-direction:column;min-width:0;height:100vh}
+.topbar{background:#fff;border-bottom:1px solid var(--g200);padding:0 22px;height:54px;display:flex;align-items:center;gap:14px;flex-shrink:0}
+.topbar-title{font-size:15px;font-weight:600;color:var(--g900)}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:8px}
+.market-pill{display:flex;align-items:center;gap:6px;background:var(--green-lt);border:1px solid #bbf7d0;padding:4px 11px;border-radius:99px;font-size:11px;font-weight:500;color:var(--teal)}
+.pdot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse 2s infinite}
+.ai-pill{display:flex;align-items:center;gap:5px;background:var(--purple-lt);border:1px solid #DDD6FE;padding:4px 11px;border-radius:99px;font-size:11px;font-weight:500;color:var(--purple)}
+.tbar-btn{width:32px;height:32px;border-radius:8px;border:1px solid var(--g200);background:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:15px;color:var(--g500)}
+.content{flex:1;overflow-y:auto;padding:22px}
+.screen{display:none}
+.screen.active{display:block}
+.card{background:#fff;border:1px solid var(--g200);border-radius:16px;padding:16px 18px;margin-bottom:14px}
+.card-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.ctitle{font-size:13px;font-weight:600;color:var(--g700);display:flex;align-items:center;gap:7px}
+.cicon{width:24px;height:24px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:13px}
+.ci-blue{background:var(--blue-lt);color:var(--blue)}
+.ci-green{background:var(--green-lt);color:var(--green)}
+.ci-amber{background:var(--amber-lt);color:var(--amber)}
+.ci-red{background:var(--red-lt);color:var(--red)}
+.ci-navy{background:rgba(30,58,95,.1);color:var(--navy)}
+.ci-purple{background:var(--purple-lt);color:var(--purple)}
+.ci-teal{background:var(--teal-lt);color:var(--teal)}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:11px}
+.mc{background:#fff;border:1px solid var(--g200);border-radius:12px;padding:14px 16px}
+.mc-lbl{font-size:10px;color:var(--g500);margin-bottom:5px;font-weight:500;text-transform:uppercase;letter-spacing:.04em}
+.mc-val{font-size:24px;font-weight:700;color:var(--g900)}
+.mc-sub{font-size:11px;color:var(--g500);margin-top:3px}
+.up{color:var(--green);font-weight:500}
+.badge{display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:99px;font-size:11px;font-weight:500}
+.b-blue{background:var(--blue-lt);color:#1D4ED8}
+.b-green{background:var(--green-lt);color:#15803D}
+.b-amber{background:var(--amber-lt);color:#B45309}
+.b-red{background:var(--red-lt);color:#B91C1C}
+.b-gray{background:var(--g100);color:var(--g600)}
+.b-navy{background:rgba(30,58,95,.1);color:var(--navy)}
+.b-teal{background:var(--teal-lt);color:var(--teal)}
+.b-purple{background:var(--purple-lt);color:var(--purple)}
+.irow{display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--g100);font-size:13px}
+.irow:last-child{border-bottom:none}
+.il{color:var(--g500)}
+.iv{font-weight:500;color:var(--g900)}
+.crow{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--g100);font-size:13px}
+.crow:last-child{border-bottom:none}
+.btn{display:inline-flex;align-items:center;gap:5px;padding:7px 14px;border-radius:8px;font-size:12.5px;font-weight:500;cursor:pointer;transition:.15s;border:none}
+.btn-p{background:var(--blue);color:#fff}
+.btn-s{background:var(--g100);color:var(--g700);border:1px solid var(--g200)}
+.btn-g{background:transparent;color:var(--g500);border:1px solid var(--g200)}
+.btn-purple{background:var(--purple);color:#fff}
+.btn-teal{background:var(--teal);color:#fff}
+.btn-sm{padding:5px 11px;font-size:12px}
+.btn-full{width:100%;justify-content:center}
+.fi{width:100%;padding:7px 11px;border:1px solid var(--g300);border-radius:8px;font-size:13px;color:var(--g900);background:#fff}
+.fsl{width:100%;padding:7px 11px;border:1px solid var(--g300);border-radius:8px;font-size:13px;color:var(--g700);background:#fff;cursor:pointer}
+.flbl{font-size:12px;font-weight:500;color:var(--g600);margin-bottom:4px;display:block}
+.fg{margin-bottom:12px}
+.act-item{display:flex;align-items:flex-start;gap:10px;padding:9px 0;border-bottom:1px solid var(--g100)}
+.act-item:last-child{border-bottom:none}
+.act-dot{width:8px;height:8px;border-radius:50%;margin-top:4px;flex-shrink:0}
+.act-txt{font-size:13px;color:var(--g700);flex:1}
+.act-time{font-size:11px;color:var(--g400);white-space:nowrap}
+.ai-badge{display:inline-flex;align-items:center;gap:4px;background:var(--purple-lt);border:1px solid #DDD6FE;padding:3px 8px;border-radius:99px;font-size:11px;font-weight:500;color:var(--purple)}
+.ai-gen{background:var(--purple-lt);border:1px dashed #C4B5FD;border-radius:12px;padding:20px;text-align:center;font-size:12px;color:var(--purple)}
+.score-dot{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:50%;font-size:12px;font-weight:700;color:#fff;flex-shrink:0}
+.score-hot{background:var(--red)}
+.score-warm{background:var(--amber)}
+.score-cold{background:var(--g400)}
+.pipeline-scroll{overflow-x:auto;padding-bottom:6px}
+.pipeline-board{display:flex;gap:9px;min-width:920px}
+.pcol{flex:1;min-width:128px;background:var(--g50);border:1px solid var(--g200);border-radius:12px;padding:9px}
+.pcol-hdr{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--g500);margin-bottom:8px;display:flex;align-items:center;justify-content:space-between}
+.gate{display:flex;align-items:center;gap:3px;font-size:10px;font-weight:500;padding:2px 6px;border-radius:99px;cursor:pointer}
+.gate-g{background:var(--green-lt);color:#15803D}
+.gate-a{background:var(--amber-lt);color:#B45309}
+.gate-r{background:var(--red-lt);color:#B91C1C}
+.pcard{background:#fff;border:1px solid var(--g200);border-radius:8px;padding:8px 9px;margin-bottom:6px;cursor:pointer;transition:.15s}
+.pcard:hover{border-color:var(--blue-mid)}
+.pcard.urgent{border-left:3px solid var(--red)}
+.pcard.done{border-left:3px solid var(--green);opacity:.75}
+.pcard-name{font-size:12px;font-weight:600;color:var(--g900)}
+.pcard-sub{font-size:11px;color:var(--g500);margin-top:2px}
+.pg{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.prop{background:#fff;border:1px solid var(--g200);border-radius:16px;overflow:hidden;cursor:pointer;transition:.15s}
+.prop:hover{border-color:var(--blue-mid);box-shadow:0 4px 12px rgba(0,0,0,.08);transform:translateY(-2px)}
+.prop-img{height:110px;background:linear-gradient(135deg,#e2e8f0,#cbd5e1);display:flex;align-items:center;justify-content:center;position:relative;font-size:34px}
+.prop-itag{position:absolute;top:8px;left:8px}
+.prop-iprice{position:absolute;bottom:8px;right:8px;background:rgba(15,23,42,.7);color:#fff;padding:3px 8px;border-radius:4px;font-size:12px;font-weight:600}
+.prop-body{padding:11px 13px}
+.prop-addr{font-size:13px;font-weight:600;color:var(--g900)}
+.prop-sub{font-size:12px;color:var(--g500);margin-top:2px}
+.prop-specs{display:flex;gap:9px;margin-top:7px;font-size:11px;color:var(--g500)}
+.prop-tags{display:flex;gap:5px;margin-top:7px;flex-wrap:wrap}
+input[type=range]{width:100%;-webkit-appearance:none;height:5px;background:var(--g200);border-radius:99px;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:17px;height:17px;border-radius:50%;background:var(--blue);box-shadow:0 0 0 3px var(--blue-lt)}
+.abar{height:30px;border-radius:4px;display:flex;overflow:hidden;margin:10px 0}
+.abar-s{background:var(--red);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;color:#fff}
+.abar-b{background:var(--blue);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;color:#fff}
+.ltbl{width:100%;border-collapse:collapse;font-size:13px}
+.ltbl th{background:var(--g50);padding:7px 10px;text-align:left;font-size:10px;font-weight:600;color:var(--g500);text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid var(--g200)}
+.ltbl td{padding:8px 10px;border-bottom:1px solid var(--g100)}
+.ltbl tr:last-child td{background:var(--g50);font-weight:600;border-bottom:none;border-top:2px solid var(--g200)}
+.ss{color:#B91C1C}.bs{color:#1D4ED8}
+.step-list{display:flex;flex-direction:column;gap:9px}
+.step-item{display:flex;align-items:flex-start;gap:11px;padding:11px 13px;border:1px solid var(--g200);border-radius:12px}
+.step-item.s-active{border-color:var(--blue-mid);background:#f0f7ff}
+.step-item.s-done{background:var(--g50)}
+.snum{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;flex-shrink:0}
+.sn-done{background:var(--green-lt);color:var(--green)}
+.sn-active{background:var(--blue-lt);color:var(--blue)}
+.sn-pend{background:var(--g100);color:var(--g400)}
+.sb{flex:1}
+.st{font-size:13px;font-weight:600;color:var(--g900)}
+.sd{font-size:12px;color:var(--g500);margin-top:3px;line-height:1.5}
+.sa{margin-top:7px;display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:500;color:var(--blue);cursor:pointer}
+.lcard{background:#fff;border:1px solid var(--g200);border-radius:12px;padding:13px 15px;display:flex;align-items:center;gap:12px;margin-bottom:9px;cursor:pointer;transition:.15s}
+.lcard:hover{border-color:var(--blue-mid)}
+.lcard.featured{border:2px solid var(--blue-mid)}
+.lav{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;flex-shrink:0}
+.linfo{flex:1}
+.lname{font-size:13px;font-weight:600;color:var(--g900)}
+.lfirm{font-size:12px;color:var(--g500);margin-top:1px}
+.lmeta{display:flex;gap:7px;margin-top:5px;flex-wrap:wrap;align-items:center}
+.stars{color:#FBBF24;font-size:12px}
+.lprice{text-align:right;flex-shrink:0}
+.lfee{font-size:15px;font-weight:700;color:var(--g900)}
+.lspeed{font-size:11px;color:var(--g500);margin-top:2px}
+.dto-step{display:flex;align-items:flex-start;gap:14px;padding:13px 15px;border:1px solid var(--g200);border-radius:12px;background:#fff;margin-bottom:9px}
+.dto-step.dto-active{border-color:var(--teal);border-width:2px;background:#F0FDF9}
+.dto-step.dto-done{background:var(--g50)}
+.dsn{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;flex-shrink:0}
+.dsn-done{background:var(--green-lt);color:var(--green)}
+.dsn-active{background:var(--teal-lt);color:var(--teal)}
+.dsn-pending{background:var(--g100);color:var(--g400)}
+.model-chip{padding:4px 10px;border-radius:99px;font-size:11px;font-weight:500;cursor:pointer;border:1px solid transparent;display:inline-block}
+.model-chip.active{background:var(--purple);color:#fff}
+.model-chip:not(.active){background:#fff;border-color:#DDD6FE;color:var(--purple)}
+.phone{width:210px;background:var(--g900);border-radius:28px;padding:12px 8px;flex-shrink:0;box-shadow:0 20px 40px rgba(0,0,0,.3)}
+.phone-notch{width:65px;height:16px;background:var(--g900);border-radius:0 0 9px 9px;margin:0 auto 8px}
+.phone-screen{background:var(--g50);border-radius:16px;overflow:hidden;min-height:370px}
+.phone-lbl{text-align:center;font-size:12px;font-weight:500;color:var(--g500);margin-top:9px}
+.mob-topbar{background:var(--navy);padding:10px 12px;display:flex;align-items:center;justify-content:space-between}
+.mob-title{font-size:12px;font-weight:600;color:#fff}
+.mob-content{padding:9px}
+.mob-pcard{background:#fff;border:1px solid var(--g200);border-radius:8px;padding:8px 9px;margin-bottom:5px}
+.mob-pcard.urg{border-left:3px solid var(--red)}
+.mob-section{font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--g400);margin:7px 0 4px}
+.mob-btn{background:var(--blue);color:#fff;border-radius:8px;padding:8px;font-size:11px;font-weight:500;text-align:center;margin-top:6px}
+.mob-notif{background:var(--navy);border-radius:8px;padding:9px 10px;margin-bottom:6px;display:flex;gap:8px}
+.mob-notif-icon{width:26px;height:26px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0}
+.mob-notif-title{font-size:11px;font-weight:600;color:#fff;margin-bottom:2px}
+.mob-notif-sub{font-size:10px;color:rgba(255,255,255,.45)}
+.mode-card{background:#fff;border:1.5px solid var(--g200);border-radius:16px;padding:26px 22px;cursor:pointer;transition:.2s}
+.mode-card:hover{border-color:var(--blue-mid);box-shadow:0 6px 20px rgba(37,99,235,.1);transform:translateY(-2px)}
+.mode-card.featured{border-color:var(--blue-mid);border-width:2px}
+</style>
+</head>
+<body>
+<div class="sidebar">
+  <div class="logo">
+    <div class="logo-mark"><div class="logo-k">S</div><span class="logo-name">Shilpi</span></div>
+    <div class="logo-tag">Australian Property Transaction Platform</div>
+  </div>
+  <div class="mode-bar">
+    <button class="mode-btn active" onclick="setMode(this,'Agent')">Agent</button>
+    <button class="mode-btn" onclick="setMode(this,'Buyer')">Buyer</button>
+    <button class="mode-btn" onclick="setMode(this,'Seller')">Seller</button>
+  </div>
+  <div class="ai-status"><div class="ai-status-row"><div class="ai-dot"></div> 3 AI agents active</div></div>
+  <div class="nav-group">Platform</div>
+  <div class="nav-item active" onclick="go('mode-select',this)"><span>🏠</span> Home</div>
+  <div class="nav-item" onclick="go('dashboard',this)"><span>📊</span> Dashboard</div>
+  <div class="nav-group">Property</div>
+  <div class="nav-item" onclick="go('search',this)"><span>🔍</span> Property search</div>
+  <div class="nav-item" onclick="go('planning',this)"><span>🗺️</span> Planning intel</div>
+  <div class="nav-item" onclick="go('finance',this)"><span>🧮</span> Financial readiness</div>
+  <div class="nav-group">AI Agents</div>
+  <div class="nav-item" onclick="go('ai-listing',this)"><span>✍️</span> Listing copywriter <span class="nav-ai">AI</span></div>
+  <div class="nav-item" onclick="go('ai-leads',this)"><span>🎯</span> Lead intelligence <span class="nav-ai">AI</span></div>
+  <div class="nav-item" onclick="go('vendor-report',this)"><span>📋</span> Vendor reports <span class="nav-ai">AI</span></div>
+  <div class="nav-group">Transaction</div>
+  <div class="nav-item" onclick="go('legal',this)"><span>⚖️</span> Legal marketplace</div>
+  <div class="nav-item" onclick="go('workspace',this)"><span>📄</span> Legal workspace</div>
+  <div class="nav-item" onclick="go('exchange',this)"><span>✍️</span> Contract exchange <span class="nav-bdg">2</span></div>
+  <div class="nav-item" onclick="go('settlement',this)"><span>🏦</span> Settlement ledger</div>
+  <div class="nav-group">Agency</div>
+  <div class="nav-item" onclick="go('crm',this)"><span>👥</span> CRM pipeline</div>
+  <div class="nav-item" onclick="go('compliance',this)"><span>🛡️</span> Compliance <span class="nav-bdg">3</span></div>
+  <div class="nav-item" onclick="go('dto',this)"><span>🔑</span> DTO journey</div>
+  <div class="nav-item" onclick="go('mobile',this)"><span>📱</span> Mobile view</div>
+  <div class="sidebar-foot">
+    <div class="user-row"><div class="user-av">VG</div><div><div class="user-name">VG Project Group</div><div class="user-role" id="urole">Principal · Agent mode</div></div></div>
+  </div>
+</div>
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-title" id="tbTitle">Home</div>
+    <div class="topbar-right">
+      <div class="ai-pill">🤖 3 agents running</div>
+      <div class="market-pill"><div class="pdot"></div>Sydney 72% · Strong market</div>
+      <div class="tbar-btn">🔔</div><div class="tbar-btn">⚙️</div>
+    </div>
+  </div>
+  <div class="content">
+    <div class="screen active" id="screen-mode-select">
+      <div style="text-align:center;padding:32px 0 24px">
+        <div style="font-size:13px;font-weight:500;color:var(--blue);background:var(--blue-lt);padding:4px 14px;border-radius:99px;display:inline-block;margin-bottom:14px">Version 1.0 · NSW · Sydney</div>
+        <div style="font-size:28px;font-weight:700;color:var(--navy);margin-bottom:8px">Welcome to Shilpi</div>
+        <div style="font-size:15px;color:var(--g500)">Australian property transaction platform — choose your journey</div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:700px;margin:0 auto 16px">
+        <div class="mode-card featured" onclick="go('dashboard',document.querySelector('[onclick*=dashboard]'))">
+          <div style="font-size:36px;margin-bottom:12px">🏢</div>
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><div style="font-size:17px;font-weight:700;color:var(--navy)">Agent mode</div><span class="badge b-blue">Most popular</span></div>
+          <div style="font-size:13px;color:var(--g500);line-height:1.6;margin-bottom:14px">Full platform for licensed agents and agencies. Manage the complete 13-stage sales lifecycle with NSW compliance built in.</div>
+          <div style="display:flex;flex-direction:column;gap:5px;margin-bottom:16px">
+            <div style="font-size:12px;color:var(--g600)">✓ 13-stage CRM with compliance gates</div>
+            <div style="font-size:12px;color:var(--g600)">✓ AI listing copywriter & lead scoring</div>
+            <div style="font-size:12px;color:var(--g600)">✓ Automated vendor reports</div>
+            <div style="font-size:12px;color:var(--g600)">✓ Settlement coordination via PEXA</div>
+          </div>
+          <button class="btn btn-p btn-full">Enter agent mode →</button>
+        </div>
+        <div class="mode-card" onclick="go('dto',document.querySelector('[onclick*=dto]'))">
+          <div style="font-size:36px;margin-bottom:12px">🔑</div>
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><div style="font-size:17px;font-weight:700;color:var(--navy)">Direct-to-owner</div><span class="badge b-teal">No agent fee</span></div>
+          <div style="font-size:13px;color:var(--g500);line-height:1.6;margin-bottom:14px">Sell or buy directly. Flat $4,900 platform fee replaces the traditional 2.5–4% commission. Same legal protections, same settlement process.</div>
+          <div style="display:flex;flex-direction:column;gap:5px;margin-bottom:16px">
+            <div style="font-size:12px;color:var(--g600)">✓ Intent-driven property search</div>
+            <div style="font-size:12px;color:var(--g600)">✓ Live planning intelligence (R2/R3/R4)</div>
+            <div style="font-size:12px;color:var(--g600)">✓ Integrated legal marketplace</div>
+            <div style="font-size:12px;color:var(--g600)">✓ Save $32,600–$60,000 vs agent</div>
+          </div>
+          <button class="btn btn-teal btn-full">Enter DTO mode →</button>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;max-width:700px;margin:0 auto">
+        <div style="background:var(--g50);border:1px solid var(--g200);border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:12px;cursor:pointer" onclick="go('workspace',document.querySelector('[onclick*=workspace]'))"><div style="font-size:26px">⚖️</div><div><div style="font-size:13px;font-weight:600;color:var(--g900)">Solicitor / Conveyancer</div><div style="font-size:12px;color:var(--g500);margin-top:2px">Transaction workspaces and contract review</div></div></div>
+        <div style="background:var(--g50);border:1px solid var(--g200);border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:12px;cursor:pointer" onclick="go('exchange',document.querySelector('[onclick*=exchange]'))"><div style="font-size:26px">👤</div><div><div style="font-size:13px;font-weight:600;color:var(--g900)">Client portal</div><div style="font-size:12px;color:var(--g500);margin-top:2px">Track transaction, view docs, sign contracts</div></div></div>
+      </div>
+    </div>
+    <div class="screen" id="screen-dashboard">
+      <div style="background:var(--amber-lt);border:1px solid #fed7aa;border-radius:8px;padding:10px 14px;margin-bottom:16px;display:flex;align-items:center;gap:10px;font-size:13px;color:#9a3412">⚠️ <strong>Compliance:</strong> 22 George St cooling-off expires in 2 days · 14 Palm Ave finance clause in 5 days<button class="btn btn-sm btn-s" style="margin-left:auto" onclick="go('compliance',document.querySelector('[onclick*=compliance]'))">View all</button></div>
+      <div class="g4" style="margin-bottom:16px">
+        <div class="mc"><div class="mc-lbl">Active listings</div><div class="mc-val">24</div><div class="mc-sub"><span class="up">↑ 3</span> this week</div></div>
+        <div class="mc"><div class="mc-lbl">Pipeline value</div><div class="mc-val">$46.2M</div><div class="mc-sub">18 active transactions</div></div>
+        <div class="mc"><div class="mc-lbl">Clearance rate</div><div class="mc-val">72%</div><div class="mc-sub"><span class="up">↑ 4%</span> vs last month</div></div>
+        <div class="mc"><div class="mc-lbl">AI actions today</div><div class="mc-val" style="color:var(--purple)">14</div><div class="mc-sub">Leads scored · Copies drafted</div></div>
+      </div>
+      <div class="g2">
+        <div>
+          <div class="card"><div class="card-hdr"><div class="ctitle"><div class="cicon ci-purple">🤖</div> AI agent activity</div><span class="badge b-purple">Live</span></div>
+            <div class="act-item"><div class="act-dot" style="background:var(--purple)"></div><div class="act-txt"><strong>Listing copy generated</strong> — 14 Merriwa St · 847 chars · REA ready</div><div class="act-time">12m ago</div></div>
+            <div class="act-item"><div class="act-dot" style="background:var(--purple)"></div><div class="act-txt"><strong>Lead scored 94/100 (Hot)</strong> — J. Nguyen · Pre-approval confirmed</div><div class="act-time">28m ago</div></div>
+            <div class="act-item"><div class="act-dot" style="background:var(--purple)"></div><div class="act-txt"><strong>Vendor report drafted</strong> — 22 George St · Week 4 · Ready to review</div><div class="act-time">1h ago</div></div>
+            <div class="act-item"><div class="act-dot" style="background:var(--purple)"></div><div class="act-txt"><strong>Contract flag</strong> — 8 River Rd · Unusual clause 14.3 noted for solicitor</div><div class="act-time">2h ago</div></div>
+          </div>
+          <div class="card"><div class="card-hdr"><div class="ctitle"><div class="cicon ci-amber">🕐</div> Compliance alerts</div><span class="badge b-red">3 urgent</span></div>
+            <div class="crow"><span>22 George St — Cooling-off ends</span><span class="badge b-red">2 days</span></div>
+            <div class="crow"><span>14 Palm Ave — Finance clause expires</span><span class="badge b-amber">5 days</span></div>
+            <div class="crow"><span>8 River Rd — Agency agreement renewal</span><span class="badge b-amber">7 days</span></div>
+            <div class="crow"><span>3 Cliff St — Settlement approaching</span><span class="badge b-blue">12 days</span></div>
+          </div>
+        </div>
+        <div>
+          <div class="card"><div class="card-hdr"><div class="ctitle"><div class="cicon ci-blue">📈</div> Sydney market pulse</div><span class="badge b-teal">Live</span></div>
+            <div class="irow"><span class="il">Weekly clearance rate</span><span class="iv" style="color:var(--green)">72% ↑</span></div>
+            <div class="irow"><span class="il">Median days on market</span><span class="iv">28 days</span></div>
+            <div class="irow"><span class="il">Average vendor discount</span><span class="iv">−2.1%</span></div>
+            <div class="irow"><span class="il">Auctions this weekend</span><span class="iv">342</span></div>
+            <div class="irow"><span class="il">Sydney median house price</span><span class="iv">$1.90M</span></div>
+          </div>
+          <div class="card"><div class="card-hdr"><div class="ctitle"><div class="cicon ci-navy">🕐</div> Recent activity</div></div>
+            <div class="act-item"><div class="act-dot" style="background:var(--blue)"></div><div class="act-txt"><strong>Contract exchanged</strong> — 14 Palm Ave, Bondi · $1.75M</div><div class="act-time">2h ago</div></div>
+            <div class="act-item"><div class="act-dot" style="background:var(--green)"></div><div class="act-txt"><strong>Settlement completed</strong> — 7 Ocean Dr, Manly · $2.35M</div><div class="act-time">Yesterday</div></div>
+            <div class="act-item"><div class="act-dot" style="background:var(--amber)"></div><div class="act-txt"><strong>Open home completed</strong> — 22 George St · 18 attendees</div><div class="act-time">Yesterday</div></div>
+            <div class="act-item"><div class="act-dot" style="background:var(--teal)"></div><div class="act-txt"><strong>Referral received</strong> — Past client → $2.3M lead, Mosman</div><div class="act-time">2 days ago</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="screen" id="screen-search">
+      <div style="background:#fff;border:1px solid var(--g200);border-radius:16px;padding:12px 14px;margin-bottom:14px">
+        <div style="display:flex;gap:8px;margin-bottom:10px"><input class="fi" type="text" placeholder="🔍  Search suburb, postcode or address…" value="Blacktown NSW" style="flex:1"><button class="btn btn-p">Search</button><button class="btn btn-s">🗺 Map</button></div>
+        <div style="display:flex;gap:7px;flex-wrap:wrap;margin-bottom:10px">
+          <div style="padding:5px 11px;border:1px solid var(--g200);border-radius:99px;font-size:12px;color:var(--g600);background:#fff"><select style="border:none;background:transparent;font-size:12px;outline:none"><option>Any price</option><option>Under $1M</option><option>$1M-$2M</option><option>$2M+</option></select></div>
+          <div style="padding:5px 11px;border:1px solid var(--g200);border-radius:99px;font-size:12px;color:var(--g600);background:#fff"><select style="border:none;background:transparent;font-size:12px;outline:none"><option>Any beds</option><option>3+ beds</option><option>4+ beds</option></select></div>
+          <div style="padding:5px 11px;border:1px solid var(--blue-mid);border-radius:99px;font-size:12px;font-weight:500;color:var(--blue);background:var(--blue-lt);cursor:pointer">🏗 Dev potential</div>
+          <div style="padding:5px 11px;border:1px solid var(--g200);border-radius:99px;font-size:12px;color:var(--g600);background:#fff;cursor:pointer">📍 Location maturity</div>
+          <div style="padding:5px 11px;border:1px solid var(--g200);border-radius:99px;font-size:12px;color:var(--g600);background:#fff"><select style="border:none;background:transparent;font-size:12px;outline:none"><option>Any zoning</option><option>R2</option><option>R3</option><option>R4</option></select></div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:9px 12px;background:var(--g50);border:1px solid var(--g200);border-radius:8px"><div><div style="font-size:12px;font-weight:500">🏚 Knockdown/rebuild</div><div style="font-size:10px;color:var(--g500)">600m²+ dev potential</div></div><div onclick="tog(this)" style="width:36px;height:20px;border-radius:10px;background:var(--blue);position:relative;cursor:pointer"><span style="position:absolute;top:2px;left:18px;width:16px;height:16px;background:#fff;border-radius:50%;transition:.2s;display:block"></span></div></div>
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:9px 12px;background:var(--g50);border:1px solid var(--g200);border-radius:8px"><div><div style="font-size:12px;font-weight:500">🏠 Established home</div><div style="font-size:10px;color:var(--g500)">Move-in ready</div></div><div onclick="tog(this)" style="width:36px;height:20px;border-radius:10px;background:var(--g300);position:relative;cursor:pointer"><span style="position:absolute;top:2px;left:3px;width:16px;height:16px;background:#fff;border-radius:50%;transition:.2s;display:block"></span></div></div>
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:9px 12px;background:var(--g50);border:1px solid var(--g200);border-radius:8px"><div><div style="font-size:12px;font-weight:500">💰 Investment yield</div><div style="font-size:10px;color:var(--g500)">Rental return focus</div></div><div onclick="tog(this)" style="width:36px;height:20px;border-radius:10px;background:var(--g300);position:relative;cursor:pointer"><span style="position:absolute;top:2px;left:3px;width:16px;height:16px;background:#fff;border-radius:50%;transition:.2s;display:block"></span></div></div>
+        </div>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:11px"><div style="font-size:13px;color:var(--g500)">Showing <strong>47 properties</strong> in Blacktown area</div><select style="font-size:12px;padding:5px 10px;border:1px solid var(--g200);border-radius:8px;color:var(--g700)"><option>Best match</option><option>Price ↑</option><option>Newest</option></select></div>
+      <div class="pg">
+        <div class="prop" onclick="go('planning',document.querySelector('[onclick*=planning]'))"><div class="prop-img">🏡<div class="prop-itag"><span class="badge b-teal">R4 · High yield</span></div><div class="prop-iprice">$1,450,000</div></div><div class="prop-body"><div class="prop-addr">14 Merriwa Street</div><div class="prop-sub">Blacktown NSW 2148</div><div class="prop-specs"><span>🛏 4</span><span>🚿 2</span><span>🚗 2</span><span>📐 640m²</span></div><div class="prop-tags"><span class="badge b-blue">Dev potential</span><span class="badge b-navy">FAR 0.9</span></div></div></div>
+        <div class="prop" onclick="go('planning',document.querySelector('[onclick*=planning]'))"><div class="prop-img">🏘<div class="prop-itag"><span class="badge b-amber">R2 · Premium</span></div><div class="prop-iprice">$2,150,000</div></div><div class="prop-body"><div class="prop-addr">8 Clifton Road</div><div class="prop-sub">Mosman NSW 2088</div><div class="prop-specs"><span>🛏 5</span><span>🚿 3</span><span>🚗 2</span><span>📐 520m²</span></div><div class="prop-tags"><span class="badge b-gray">Established</span><span class="badge b-navy">FAR 0.5</span></div></div></div>
+        <div class="prop" onclick="go('planning',document.querySelector('[onclick*=planning]'))"><div class="prop-img">🏠<div class="prop-itag"><span class="badge b-green">R3 · New sub.</span></div><div class="prop-iprice">$1,780,000</div></div><div class="prop-body"><div class="prop-addr">22 Rouse Hill Drive</div><div class="prop-sub">Rouse Hill NSW 2155</div><div class="prop-specs"><span>🛏 4</span><span>🚿 2</span><span>🚗 2</span><span>📐 600m²</span></div><div class="prop-tags"><span class="badge b-blue">Duplex feasible</span><span class="badge b-navy">FAR 0.7</span></div></div></div>
+      </div>
+    </div>
+    <div class="screen" id="screen-planning">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;background:#fff;border:1px solid var(--g200);border-radius:16px;padding:11px 14px"><span style="font-size:20px">🏡</span><div style="flex:1"><div style="font-size:14px;font-weight:600">14 Merriwa Street, Blacktown NSW 2148</div><div style="font-size:12px;color:var(--g500);margin-top:2px">4 bed · 2 bath · 640m² · Listed $1,450,000</div></div><span class="badge b-teal">R4 High density</span><button class="btn btn-p btn-sm" onclick="go('finance',document.querySelector('[onclick*=finance]'))">Calculate costs →</button></div>
+      <div class="g2">
+        <div>
+          <div class="card"><div class="card-hdr"><div class="ctitle"><div class="cicon ci-blue">🗺</div> Live zoning data</div><span class="badge b-teal">NSW Planning Portal</span></div><div style="background:#e8f4fd;border-radius:8px;height:120px;position:relative;overflow:hidden;margin-bottom:12px;border:1px solid var(--g200)"><div style="position:absolute;width:85px;height:62px;background:#93c5fd;left:14px;top:24px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff">R2</div><div style="position:absolute;width:76px;height:58px;background:#3b82f6;left:98px;top:34px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff">R3</div><div style="position:absolute;width:72px;height:72px;background:#1d4ed8;right:18px;top:20px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff">R4</div></div><div class="irow"><span class="il">Current zoning</span><span class="iv"><span class="badge b-blue">R4 High density</span></span></div><div class="irow"><span class="il">Floor area ratio (FAR)</span><span class="iv">0.9 : 1</span></div><div class="irow"><span class="il">Max building height</span><span class="iv">9.5m (2 storeys)</span></div><div class="irow"><span class="il">Minimum lot size</span><span class="iv">450m²</span></div><div class="irow"><span class="il">Required frontage</span><span class="iv">15m minimum</span></div><div style="margin-top:10px"><button class="btn btn-g btn-sm btn-full">🔗 NSW Planning Portal</button></div></div>
+          <div class="card"><div class="card-hdr"><div class="ctitle"><div class="cicon ci-green">📊</div> Comparable sales</div><span class="badge b-gray">500m · 6 months</span></div><div class="irow"><span class="il">18 Merriwa St</span><span class="iv">$1,490,000 · 31 days</span></div><div class="irow"><span class="il">2 Jasmine Court</span><span class="iv">$1,380,000 · 18 days</span></div><div class="irow"><span class="il">9 Kingsway Place</span><span class="iv">$1,510,000 · 22 days</span></div><div class="irow" style="margin-top:4px;padding-top:10px;border-top:1px solid var(--g200)"><span class="il" style="font-weight:600">Suburb median</span><span class="iv">$1,442,000</span></div><div class="irow"><span class="il">This listing vs median</span><span class="iv" style="color:var(--amber)">+0.6% (at market)</span></div></div>
+        </div>
+        <div>
+          <div class="card"><div class="card-hdr"><div class="ctitle"><div class="cicon ci-amber">🏗</div> Development feasibility</div></div><div class="irow"><span class="il">Duplex development</span><span class="iv" style="color:var(--green)">✓ Feasible</span></div><div class="irow"><span class="il">Knockdown / rebuild</span><span class="iv" style="color:var(--green)">✓ Feasible</span></div><div class="irow"><span class="il">Max gross floor area</span><span class="iv">576m² GFA</span></div><div class="irow"><span class="il">Granny flat (SEPP)</span><span class="iv" style="color:var(--green)">✓ Compliant</span></div><div class="irow"><span class="il">Battleaxe subdivision</span><span class="iv" style="color:var(--amber)">⚠ Borderline</span></div><div class="irow"><span class="il">Strata subdivision</span><span class="iv" style="color:var(--red)">✗ Not viable</span></div></div>
+          <div class="card"><div class="card-hdr"><div class="ctitle"><div class="cicon ci-navy">⚖️</div> Council compliance</div></div><div class="irow"><span class="il">Council LGA</span><span class="iv">Blacktown City Council</span></div><div class="irow"><span class="il">LEP Clause 4.3 (height)</span><span class="iv"><span class="badge b-green">Meets</span></span></div><div class="irow"><span class="il">LEP Clause 4.4 (FAR)</span><span class="iv"><span class="badge b-green">Meets</span></span></div><div class="irow"><span class="il">SEPP Housing 2021</span><span class="iv"><span class="badge b-green">Applicable</span></span></div><div class="irow"><span class="il">Landscaping req.</span><span class="iv">20% of site (128m²)</span></div><div style="margin-top:10px"><button class="btn btn-g btn-sm btn-full">🔗 Blacktown DCP Residential</button></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="screen" id="screen-finance">
+      <div class="g2">
+        <div class="card"><div class="card-hdr"><div class="ctitle"><div class="cicon ci-navy">🧮</div> Property & buyer details</div></div><div class="fg"><label class="flbl">Purchase price ($AUD)</label><input class="fi" type="text" id="fp" value="1,450,000" oninput="calcFin()"></div><div class="fg"><label class="flbl">State</label><select class="fsl" id="fst" onchange="calcFin()"><option value="nsw">New South Wales (NSW)</option><option value="vic">Victoria (VIC)</option><option value="qld">Queensland (QLD)</option></select></div><div class="fg"><label class="flbl">Buyer type</label><select class="fsl" id="fbt" onchange="calcFin()"><option value="owner">Owner-occupier</option><option value="fhb">First home buyer</option><option value="inv">Investor</option></select></div><div style="margin-bottom:12px"><div style="display:flex;justify-content:space-between;margin-bottom:5px"><span class="flbl">Deposit</span><span style="font-size:12px;font-weight:600;color:var(--blue);background:var(--blue-lt);padding:2px 8px;border-radius:99px" id="dpLbl">10%</span></div><input type="range" min="5" max="40" value="10" id="dpSlider" oninput="document.getElementById('dpLbl').textContent=this.value+'%';calcFin()"></div></div>
+        <div>
+          <div class="card"><div class="card-hdr"><div class="ctitle"><div class="cicon ci-green">🧾</div> Breakdown — <span id="stLbl">NSW</span></div></div><div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px dashed var(--g200);font-size:13px"><span style="color:var(--g600)">Stamp duty</span><span id="sdVal" style="font-weight:500">$62,135</span></div><div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px dashed var(--g200);font-size:13px"><span style="color:var(--g600)">Registration fees</span><span>$276</span></div><div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px dashed var(--g200);font-size:13px"><span style="color:var(--g600)">Conveyancing</span><span>$2,200</span></div><div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px dashed var(--g200);font-size:13px"><span style="color:var(--g600)">LMI (if >80% LVR)</span><span id="lmiVal">$0</span></div><div style="display:flex;justify-content:space-between;padding:8px 0;border-top:2px solid var(--g200);font-size:14px;font-weight:600"><span>Total fees</span><span id="tfVal">$65,211</span></div><div style="background:var(--navy);border-radius:12px;padding:16px;text-align:center;margin-top:10px"><div style="font-size:12px;color:rgba(255,255,255,.5);margin-bottom:4px">Total cash required</div><div style="font-size:28px;font-weight:700;color:#fff" id="tcVal">$210,211</div><div style="font-size:11px;color:rgba(255,255,255,.35);margin-top:5px">Dep: <span id="dAmt">$145,000</span> + Fees: <span id="fAmt">$65,211</span></div></div></div>
+          <div class="card"><div class="card-hdr"><div class="ctitle"><div class="cicon ci-blue">✅</div> Readiness check</div></div><div class="crow"><span>LVR ratio</span><span class="badge b-amber" id="lvrBdg">90% LVR</span></div><div class="crow"><span>LMI required</span><span class="badge b-amber" id="lmiBdg">⚠ Yes (>80%)</span></div><div class="crow"><span>FHB concession</span><span class="badge b-gray" id="fhbBdg">Not applicable</span></div><div style="margin-top:10px"><button class="btn btn-p btn-sm btn-full" onclick="go('legal',document.querySelector('[onclick*=legal]'))">Find a conveyancer →</button></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="screen" id="screen-ai-listing">
+      <div style="background:var(--purple-lt);border:1px solid #DDD6FE;border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:13px;color:var(--purple)">🤖 <strong>AI Listing Copywriter</strong> — Generates compelling property descriptions. You review and approve before publishing to portals.</div>
+      <div class="g2">
+        <div>
+          <div class="card"><div class="card-hdr"><div class="ctitle"><div class="cicon ci-navy">🏡</div> Property details</div></div><div class="fg"><label class="flbl">Address</label><input class="fi" type="text" value="14 Merriwa Street, Blacktown NSW 2148"></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px"><div><label class="flbl">Bedrooms</label><select class="fsl"><option>4</option><option>3</option><option>5</option></select></div><div><label class="flbl">Lot size</label><input class="fi" value="640m²"></div></div><div class="fg"><label class="flbl">Property type / tone</label><select class="fsl"><option>Development site — investor focused</option><option>Family home — warm & lifestyle</option><option>Knockdown/rebuild — opportunity</option></select></div><div class="fg"><label class="flbl">Key features</label><textarea class="fi" rows="3" style="resize:none">Corner position, dual driveway, R4 zoning, 15.2m frontage, near Blacktown station</textarea></div><div class="fg"><label class="flbl">Target portal</label><select class="fsl"><option>realestate.com.au (limit: 1000 chars)</option><option>Domain.com.au (limit: 2000 chars)</option></select></div></div>
+          <div style="background:var(--purple-lt);border-radius:8px;padding:10px 12px;margin-bottom:10px;display:flex;align-items:center;gap:8px"><span style="font-size:11px;font-weight:500;color:var(--purple)">AI model:</span><div class="model-chip active" onclick="pickModel(this)">Claude Haiku</div><div class="model-chip" onclick="pickModel(this)">Claude Sonnet</div><div style="margin-left:auto;font-size:11px;color:var(--purple)">Est. cost: ~$0.03</div></div>
+          <button class="btn btn-purple btn-full" onclick="runCopy()">🤖 Generate listing copy</button>
+        </div>
+        <div>
+          <div class="card"><div class="card-hdr"><div class="ctitle"><div class="cicon ci-purple">✍️</div> Generated copy</div><span class="ai-badge">AI Draft</span></div>
+            <div id="copyGen" style="display:none" class="ai-gen">🤖 Generating listing copy…<br><span style="font-size:11px;opacity:.7">Reading specs · Crafting headline · Checking REA limits</span></div>
+            <div id="copyOut"><div style="background:var(--blue-lt);border-radius:8px;padding:10px 12px;margin-bottom:10px"><div style="font-size:10px;font-weight:600;color:var(--blue);text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Headline</div><div style="font-size:14px;font-weight:600;color:var(--g900)">Corner R4 Block — 640m² of Development Opportunity in Booming Blacktown</div></div><div style="background:var(--g50);border-radius:8px;padding:10px 12px;margin-bottom:10px"><div style="font-size:10px;font-weight:600;color:var(--g500);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">Description</div><div style="font-size:13px;color:var(--g700);line-height:1.7">Positioned on a commanding 640m² corner allotment with coveted R4 High Density zoning and a generous 15.2m frontage, this property represents a rare development opportunity in Blacktown's growing precinct.<br><br>Whether you're envisioning a boutique duplex, a knockdown-rebuild masterpiece, or a premium family home with dual access, the planning potential is exceptional. SEPP Housing 2021 compliance means the approval pathway is clear.<br><br>A short stroll to Blacktown Station, Westpoint Shopping, and quality schools.</div></div><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px"><span style="font-size:11px;color:var(--g500)">847 / 1,000 characters</span><span class="badge b-green">Within REA limit</span></div><div style="height:4px;background:var(--g200);border-radius:99px;overflow:hidden"><div style="height:100%;width:84.7%;background:var(--green);border-radius:99px"></div></div></div>
+            <div style="display:flex;gap:8px;margin-top:12px"><button class="btn btn-p" style="flex:1">✓ Approve & publish</button><button class="btn btn-s" style="flex:1">✏️ Edit</button><button class="btn btn-g" onclick="runCopy()">↺ Regen</button></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="screen" id="screen-ai-leads">
+      <div style="background:var(--purple-lt);border:1px solid #DDD6FE;border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:13px;color:var(--purple)">🤖 <strong>Lead Intelligence Agent</strong> — Scores every enquiry for intent, budget fit, and urgency. Recommends next best action.</div>
+      <div class="g2">
+        <div>
+          <div class="card" style="padding:0;overflow:hidden">
+            <div style="padding:12px 16px;border-bottom:1px solid var(--g200);display:flex;align-items:center;justify-content:space-between"><div style="font-size:13px;font-weight:600">All leads — AI scored</div><div style="display:flex;gap:5px"><span class="badge b-red">Hot 3</span><span class="badge b-amber">Warm 8</span><span class="badge b-gray">Cold 12</span></div></div>
+            <div style="padding:10px 12px">
+              <div onclick="selLead(this)" style="display:flex;align-items:center;gap:10px;margin-bottom:7px;padding:10px 12px;border:1px solid var(--g200);border-radius:12px;cursor:pointer"><div class="score-dot score-hot">94</div><div style="flex:1"><div style="font-size:13px;font-weight:600">James Nguyen</div><div style="font-size:11px;color:var(--g500)">$1.1M-$1.3M · Blacktown · 3h ago</div></div><div class="badge b-red">Hot</div></div>
+              <div onclick="selLead(this)" style="display:flex;align-items:center;gap:10px;margin-bottom:7px;padding:10px 12px;border:1px solid var(--g200);border-radius:12px;cursor:pointer"><div class="score-dot score-hot">88</div><div style="flex:1"><div style="font-size:13px;font-weight:600">Sarah Patel</div><div style="font-size:11px;color:var(--g500)">$2.4M · Mosman · 5h ago</div></div><div class="badge b-red">Hot</div></div>
+              <div onclick="selLead(this)" style="display:flex;align-items:center;gap:10px;margin-bottom:7px;padding:10px 12px;border:1px solid var(--g200);border-radius:12px;cursor:pointer"><div class="score-dot score-warm">67</div><div style="flex:1"><div style="font-size:13px;font-weight:600">Michael Lee</div><div style="font-size:11px;color:var(--g500)">$1.8M · Ryde · Yesterday</div></div><div class="badge b-amber">Warm</div></div>
+              <div style="display:flex;align-items:center;gap:10px;margin-bottom:7px;padding:10px 12px;border:1px solid var(--g200);border-radius:12px;cursor:pointer"><div class="score-dot score-warm">54</div><div style="flex:1"><div style="font-size:13px;font-weight:600">Emma Wilson</div><div style="font-size:11px;color:var(--g500)">$900K-$1.1M · Parramatta · 2d ago</div></div><div class="badge b-amber">Warm</div></div>
+              <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--g200);border-radius:12px;cursor:pointer"><div class="score-dot score-cold">28</div><div style="flex:1"><div style="font-size:13px;font-weight:600">R. Thompson</div><div style="font-size:11px;color:var(--g500)">Browsing · No budget · 3d ago</div></div><div class="badge b-gray">Cold</div></div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="card"><div class="card-hdr"><div class="ctitle"><div class="cicon ci-purple">🎯</div> AI analysis — James Nguyen</div><span class="ai-badge">AI scored</span></div>
+            <div style="display:flex;align-items:center;gap:14px;padding:14px;background:var(--red-lt);border-radius:12px;margin-bottom:14px"><div class="score-dot score-hot" style="width:52px;height:52px;font-size:18px;flex-shrink:0">94</div><div><div style="font-size:16px;font-weight:700;color:var(--red)">Hot lead</div><div style="font-size:12px;color:#B91C1C;margin-top:2px">High intent · Finance ready · Act within 2 hours</div></div></div>
+            <div style="font-size:11px;font-weight:600;color:var(--g500);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">AI reasoning</div>
+            <div style="display:flex;flex-direction:column;gap:5px;margin-bottom:14px">
+              <div style="display:flex;gap:8px;font-size:12px;padding:7px 10px;background:var(--green-lt);border-radius:8px"><span style="color:var(--green)">✓</span><span><strong>Pre-approval confirmed</strong> — mentioned in enquiry text</span></div>
+              <div style="display:flex;gap:8px;font-size:12px;padding:7px 10px;background:var(--green-lt);border-radius:8px"><span style="color:var(--green)">✓</span><span><strong>Viewed listing 4 times</strong> — returning buyer signal</span></div>
+              <div style="display:flex;gap:8px;font-size:12px;padding:7px 10px;background:var(--green-lt);border-radius:8px"><span style="color:var(--green)">✓</span><span><strong>Asked about inspection</strong> — "available this weekend?"</span></div>
+              <div style="display:flex;gap:8px;font-size:12px;padding:7px 10px;background:var(--amber-lt);border-radius:8px"><span style="color:var(--amber)">~</span><span><strong>Budget stretch</strong> — $1.3M ceiling, listed $1.45M</span></div>
+            </div>
+            <div style="background:var(--blue-lt);border-radius:8px;padding:10px 12px;margin-bottom:12px;font-size:13px;color:#1D4ED8">📞 <strong>Call within 2 hours.</strong> Reference pre-approval, offer a private inspection Saturday AM. Mention R4 zoning — possible development interest.</div>
+            <div style="display:flex;gap:8px"><button class="btn btn-p" style="flex:1">📞 Log call</button><button class="btn btn-s" style="flex:1">📅 Book inspection</button></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="screen" id="screen-vendor-report">
+      <div style="background:var(--purple-lt);border:1px solid #DDD6FE;border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:13px;color:var(--purple)">🤖 <strong>Vendor Report Writer</strong> — Drafts professional weekly vendor reports from your raw data. Saves 30 min per property per week.</div>
+      <div class="g2">
+        <div class="card"><div class="card-hdr"><div class="ctitle"><div class="cicon ci-navy">📊</div> Weekly data — 22 George St</div><span class="badge b-gray">Week 4</span></div><div class="fg"><label class="flbl">Open home attendance</label><input class="fi" type="number" value="18"></div><div class="fg"><label class="flbl">Private inspections</label><input class="fi" type="number" value="3"></div><div class="fg"><label class="flbl">Portal enquiries (week)</label><input class="fi" type="number" value="12"></div><div class="fg"><label class="flbl">REA listing views</label><input class="fi" type="number" value="847"></div><div class="fg"><label class="flbl">Buyer feedback notes</label><textarea class="fi" rows="4" style="resize:none">Positive about kitchen. 3 buyers asked vendor expectations. 1 pre-approved couple at $1.9M very interested.</textarea></div><div class="fg"><label class="flbl">Current best offer</label><input class="fi" value="$1,980,000 verbal (week 3)"></div><button class="btn btn-purple btn-full" onclick="genRpt()">🤖 Generate vendor report</button></div>
+        <div>
+          <div class="card"><div class="card-hdr"><div class="ctitle"><div class="cicon ci-purple">📋</div> AI-drafted report</div><span class="ai-badge">AI Draft</span></div>
+            <div id="rptGen" style="display:none" class="ai-gen">🤖 Drafting vendor report…<br><span style="font-size:11px;opacity:.7">Analysing data · Writing narrative · Formatting</span></div>
+            <div id="rptOut" style="background:var(--g50);border:1px solid var(--g200);border-radius:12px;padding:14px">
+              <div style="font-size:13px;font-weight:700;color:var(--navy);margin-bottom:2px">Weekly Update — 22 George St, Pyrmont</div>
+              <div style="font-size:11px;color:var(--g500);margin-bottom:12px">Week 4 of campaign · Prepared by Shilpi</div>
+              <div style="font-size:13px;font-weight:600;color:var(--navy);margin-bottom:5px">Campaign performance</div>
+              <div style="font-size:13px;color:var(--g700);line-height:1.7;margin-bottom:10px">Week four has continued to generate strong buyer interest, with 18 attendees at Saturday's open home and 3 private inspections — 21 total for the week. Your listing received 847 views on realestate.com.au and 12 new enquiries.</div>
+              <div style="font-size:13px;font-weight:600;color:var(--navy);margin-bottom:5px">Buyer sentiment</div>
+              <div style="font-size:13px;color:var(--g700);line-height:1.7;margin-bottom:10px">Feedback has been consistently positive, with particular praise for the kitchen renovation. One pre-approved couple (capacity $1.9M) expressed strong interest and are likely to make a formal offer this week.</div>
+              <div style="background:var(--blue-lt);border-radius:8px;padding:9px 11px;font-size:13px;color:#1D4ED8"><strong>Recommendation:</strong> Hold current position. Expect written offer by Friday.</div>
+            </div>
+            <div style="display:flex;gap:8px;margin-top:12px"><button class="btn btn-p" style="flex:1">📧 Review & send</button><button class="btn btn-s" style="flex:1">✏️ Edit</button><button class="btn btn-g" onclick="genRpt()">↺ Regen</button></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="screen" id="screen-legal">
+      <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;align-items:center"><input class="fi" type="text" placeholder="🔍  Search conveyancer…" style="max-width:260px"><select class="fsl" style="max-width:190px"><option>All specialties</option><option>Residential conveyancing</option><option>Strata</option></select><select class="fsl" style="max-width:170px"><option>Any location</option><option>Sydney CBD</option><option>Parramatta</option></select><select class="fsl" style="max-width:150px"><option>Sort: Rating</option><option>Price ↑</option><option>Speed</option></select><span class="badge b-gray" style="margin-left:auto">14 results</span></div>
+      <div class="card" style="padding:0;overflow:hidden"><div style="background:var(--blue-lt);border-bottom:1px solid var(--blue-mid);padding:9px 14px;font-size:12px;color:#1d4ed8;font-weight:500">⭐ Recommended for 14 Merriwa St, Blacktown — Residential conveyancing, NSW</div>
+        <div style="padding:12px 14px">
+          <div class="lcard featured"><div class="lav" style="background:var(--blue-lt);color:var(--blue)">SR</div><div class="linfo"><div class="lname">Sarah Richardson</div><div class="lfirm">Richardson Conveyancing · Sydney CBD</div><div class="lmeta"><span class="stars">★★★★★</span><span style="font-size:11px;color:var(--g500)">4.9 (127)</span><span class="badge b-teal" style="font-size:10px">Fastest</span></div></div><div class="lprice"><div class="lfee">$1,200</div><div class="lspeed">⏱ 2-3 days</div><div style="margin-top:7px"><button class="btn btn-p btn-sm">Engage →</button></div></div></div>
+          <div class="lcard"><div class="lav" style="background:var(--green-lt);color:var(--green)">MK</div><div class="linfo"><div class="lname">Michael Kwan</div><div class="lfirm">Kwan Legal · Barangaroo</div><div class="lmeta"><span class="stars">★★★★½</span><span style="font-size:11px;color:var(--g500)">4.8 (89)</span><span class="badge b-blue" style="font-size:10px">Strata</span></div></div><div class="lprice"><div class="lfee">$1,500</div><div class="lspeed">⏱ 1 week</div><div style="margin-top:7px"><button class="btn btn-s btn-sm">Engage →</button></div></div></div>
+          <div class="lcard"><div class="lav" style="background:var(--amber-lt);color:var(--amber)">AP</div><div class="linfo"><div class="lname">Anita Patel</div><div class="lfirm">Patel & Associates · Parramatta</div><div class="lmeta"><span class="stars">★★★★★</span><span style="font-size:11px;color:var(--g500)">5.0 (52)</span><span class="badge b-amber" style="font-size:10px">Dev apps</span></div></div><div class="lprice"><div class="lfee">$1,350</div><div class="lspeed">⏱ 3-4 days</div><div style="margin-top:7px"><button class="btn btn-s btn-sm">Engage →</button></div></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="screen" id="screen-workspace">
+      <div class="g2">
+        <div>
+          <div class="card"><div class="card-hdr"><div class="ctitle"><div class="cicon ci-navy">📄</div> Contract of sale</div><span class="badge b-amber">Under review</span></div><div class="irow"><span class="il">Document</span><span class="iv">Secure PDF · v3</span></div><div class="irow"><span class="il">Uploaded by</span><span class="iv">Seller's solicitor</span></div><div class="irow"><span class="il">AI review</span><span class="iv"><span class="ai-badge">2 flags raised</span></span></div><div style="background:var(--amber-lt);border-radius:8px;padding:9px 11px;margin:10px 0;font-size:12px;color:#92400e"><strong>🤖 AI flagged:</strong> Clause 14.3 — non-standard settlement wording. Clause 22.1 — special condition needs clarification. For solicitor review.</div><div style="display:flex;gap:8px;margin-top:10px"><button class="btn btn-p" style="flex:1">👁 View</button><button class="btn btn-s" style="flex:1">⬇ Download</button></div></div>
+          <div class="card"><div class="card-hdr"><div class="ctitle"><div class="cicon ci-blue">💬</div> In-app observations</div><span class="badge b-gray">Replaces email</span></div><div style="max-height:200px;overflow-y:auto;margin-bottom:10px;display:flex;flex-direction:column;gap:7px"><div style="background:var(--blue-lt);border-radius:8px;padding:9px 12px;font-size:12px"><div style="font-weight:600;color:var(--blue);margin-bottom:3px">Sarah Richardson (Buyer's lawyer)</div>Clause 14.3 — requesting 60 days. Current draft says 42 days.<div style="font-size:10px;color:var(--g400);margin-top:4px">Today 9:14am</div></div><div style="background:var(--g100);border-radius:8px;padding:9px 12px;font-size:12px"><div style="font-weight:600;color:var(--amber);margin-bottom:3px">M. Nguyen (Seller's lawyer)</div>42 days preferred. Will discuss 52 days compromise.<div style="font-size:10px;color:var(--g400);margin-top:4px">Today 10:02am</div></div><div style="background:var(--blue-lt);border-radius:8px;padding:9px 12px;font-size:12px"><div style="font-weight:600;color:var(--blue);margin-bottom:3px">Sarah Richardson (Buyer's lawyer)</div>52 days acceptable. Please issue revised contract.<div style="font-size:10px;color:var(--g400);margin-top:4px">Today 10:28am</div></div></div><div style="display:flex;gap:7px"><input class="fi" type="text" placeholder="Add observation…" style="flex:1"><button class="btn btn-p">Send</button></div></div>
+        </div>
+        <div>
+          <div class="card"><div class="card-hdr"><div class="ctitle"><div class="cicon ci-blue">📊</div> Live tracking</div></div><div style="margin-bottom:12px"><div style="display:flex;justify-content:space-between;font-size:12px;color:var(--g500);margin-bottom:5px"><span>Review progress</span><span>Step 3 of 5</span></div><div style="height:7px;background:var(--g200);border-radius:99px;overflow:hidden"><div style="height:100%;width:60%;background:var(--blue);border-radius:99px"></div></div></div><div class="crow"><span style="display:flex;align-items:center;gap:7px"><span style="color:var(--green)">✓</span> Contract received</span><span class="badge b-green">Done</span></div><div class="crow"><span style="display:flex;align-items:center;gap:7px"><span style="color:var(--green)">✓</span> Lawyer engaged</span><span class="badge b-green">Done</span></div><div class="crow" style="background:var(--blue-lt);padding:7px 6px;border-radius:8px"><span style="display:flex;align-items:center;gap:7px"><span style="color:var(--blue)">◉</span> <strong>Clause negotiations</strong></span><span class="badge b-blue">Active</span></div><div class="crow"><span style="display:flex;align-items:center;gap:7px;color:var(--g400)"><span>○</span> Both parties sign</span><span class="badge b-gray">Pending</span></div><div class="crow"><span style="display:flex;align-items:center;gap:7px;color:var(--g400)"><span>○</span> Exchange confirmed</span><span class="badge b-gray">Pending</span></div></div>
+          <div class="card"><div class="card-hdr"><div class="ctitle"><div class="cicon ci-green">🔔</div> Push notifications</div><span class="badge b-green">All active</span></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:7px"><div style="background:var(--green-lt);border-radius:8px;padding:8px;font-size:11px;color:var(--teal)">✓ Buyer notified</div><div style="background:var(--green-lt);border-radius:8px;padding:8px;font-size:11px;color:var(--teal)">✓ Seller notified</div><div style="background:var(--green-lt);border-radius:8px;padding:8px;font-size:11px;color:var(--teal)">✓ Buyer's lawyer</div><div style="background:var(--green-lt);border-radius:8px;padding:8px;font-size:11px;color:var(--teal)">✓ Seller's lawyer</div></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="screen" id="screen-exchange">
+      <div style="background:var(--blue-lt);border:1px solid var(--blue-mid);border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:13px;color:#1d4ed8;display:flex;align-items:center;gap:8px">⚡ <strong>Platform advantage:</strong> Traditional exchange takes 1-2 weeks via postal routing. Simultaneous digital execution completes in minutes.</div>
+      <div class="g2">
+        <div>
+          <div class="card"><div class="card-hdr"><div class="ctitle"><div class="cicon ci-blue">✍️</div> Exchange progress</div></div>
+            <div class="step-list">
+              <div class="step-item s-done"><div class="snum sn-done">✓</div><div class="sb"><div class="st">Negotiations finalised</div><div class="sd">All clauses agreed. 52-day settlement confirmed by both solicitors.</div></div></div>
+              <div class="step-item s-done"><div class="snum sn-done">✓</div><div class="sb"><div class="st">Financial readiness verified</div><div class="sd">$210,211 cash confirmed. 10% deposit ($145,000) available in trust.</div></div></div>
+              <div class="step-item s-active"><div class="snum sn-active">3</div><div class="sb"><div class="st">Simultaneous digital signing</div><div class="sd">Both parties sign via secure in-app digital signature simultaneously.</div><div class="sa">✍ Sign now →</div></div></div>
+              <div class="step-item"><div class="snum sn-pend">4</div><div class="sb"><div class="st">Deposit transfer initiated</div><div class="sd">10% deposit ($145,000) transferred to solicitor trust account.</div></div></div>
+              <div class="step-item"><div class="snum sn-pend">5</div><div class="sb"><div class="st">Exchange confirmed — cooling-off begins</div><div class="sd">All parties notified via push. NSW 5-day cooling-off starts.</div></div></div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div style="background:var(--navy);border-radius:16px;padding:20px;text-align:center;margin-bottom:14px"><div style="font-size:11px;color:rgba(255,255,255,.45);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">NSW Cooling-off period</div><div style="font-size:48px;font-weight:700;color:#fff;line-height:1">5</div><div style="font-size:13px;color:rgba(255,255,255,.55);margin-top:4px">Business days after exchange</div><div style="font-size:11px;color:rgba(255,255,255,.3);margin-top:6px">Auto-calculated · Excludes NSW public holidays</div></div>
+          <div class="card"><div class="card-hdr"><div class="ctitle"><div class="cicon ci-green">🛡</div> NSW compliance gate</div></div><div class="crow"><span>Agency agreement on file</span><span class="badge b-green">✓</span></div><div class="crow"><span>Contract prepared by solicitor</span><span class="badge b-green">✓</span></div><div class="crow"><span>Deposit confirmed (10%)</span><span class="badge b-green">✓ $145,000</span></div><div class="crow"><span>Identity verification</span><span class="badge b-green">✓ Both parties</span></div><div class="crow"><span>Stamp duty estimate provided</span><span class="badge b-green">✓ $62,135</span></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="screen" id="screen-settlement">
+      <div class="g2">
+        <div>
+          <div class="card"><div class="card-hdr"><div class="ctitle"><div class="cicon ci-blue">📊</div> Settlement apportionment</div><span class="badge b-navy">23 May 2026</span></div><div style="font-size:12px;color:var(--g500);margin-bottom:6px">Settlement date: Day 23 of 31-day billing period</div><div class="abar"><div class="abar-s" style="flex:.69">Seller · Days 1-22 · 69%</div><div class="abar-b" style="flex:.31">Buyer · Day 23+ · 31%</div></div><table class="ltbl"><thead><tr><th>Item</th><th>Total</th><th class="ss">Seller</th><th class="bs">Buyer</th></tr></thead><tbody><tr><td>Gas</td><td>$85.00</td><td class="ss">$58.80</td><td class="bs">$26.20</td></tr><tr><td>Electricity</td><td>$120.00</td><td class="ss">$83.01</td><td class="bs">$36.99</td></tr><tr><td>Council rates</td><td>$600.00</td><td class="ss">$415.06</td><td class="bs">$184.94</td></tr><tr><td>Water rates</td><td>$220.00</td><td class="ss">$152.09</td><td class="bs">$67.91</td></tr><tr><td><strong>Total</strong></td><td><strong>$1,025.00</strong></td><td class="ss"><strong>$708.96</strong></td><td class="bs"><strong>$316.04</strong></td></tr></tbody></table><div style="background:var(--green-lt);border-radius:12px;padding:12px;text-align:center;margin-top:12px"><div style="font-size:12px;color:var(--teal);font-weight:500">Buyer adjustment at settlement</div><div style="font-size:20px;font-weight:700;color:var(--teal)">+ $316.04</div></div></div>
+        </div>
+        <div>
+          <div class="card"><div class="card-hdr"><div class="ctitle"><div class="cicon ci-navy">🏦</div> Direct bank settlement</div></div><div style="display:flex;align-items:center;justify-content:space-between;padding:16px;background:var(--g50);border-radius:8px;border:1px solid var(--g200);margin-bottom:12px"><div style="text-align:center"><div style="font-size:22px">📄</div><div style="font-size:11px;font-weight:500;color:var(--g700);margin-top:4px">Buyer's<br>lawyer</div></div><div style="font-size:18px;color:var(--blue)">→</div><div style="text-align:center"><div style="font-size:22px">⚙️</div><div style="font-size:11px;font-weight:500;color:var(--g700);margin-top:4px">Platform<br>(PEXA)</div></div><div style="font-size:18px;color:var(--blue)">→</div><div style="text-align:center"><div style="font-size:22px">🏛</div><div style="font-size:11px;font-weight:500;color:var(--g700);margin-top:4px">Buyer's<br>bank</div></div><div style="font-size:18px;color:var(--g300)">→</div><div style="text-align:center"><div style="font-size:22px">💳</div><div style="font-size:11px;font-weight:500;color:var(--g700);margin-top:4px">Seller's<br>account</div></div></div>
+            <div class="card" style="margin-bottom:0"><div class="card-hdr"><div class="ctitle"><div class="cicon ci-green">💰</div> Final statement</div></div><div class="irow"><span class="il">Purchase price</span><span class="iv">$1,450,000.00</span></div><div class="irow"><span class="il">Less deposit paid</span><span class="iv" style="color:var(--red)">− $145,000.00</span></div><div class="irow"><span class="il">Plus adjustments</span><span class="iv" style="color:var(--blue)">+ $316.04</span></div><div style="background:var(--navy);border-radius:8px;padding:12px;text-align:center;margin-top:10px"><div style="font-size:11px;color:rgba(255,255,255,.45)">Balance to seller</div><div style="font-size:22px;font-weight:700;color:#fff">$1,305,316.04</div></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="screen" id="screen-crm">
+      <div class="g4" style="margin-bottom:14px">
+        <div class="mc"><div class="mc-lbl">Total leads</div><div class="mc-val">142</div><div class="mc-sub"><span class="up">↑ 8</span> this week</div></div>
+        <div class="mc"><div class="mc-lbl">Active transactions</div><div class="mc-val">18</div><div class="mc-sub">Across 13 stages</div></div>
+        <div class="mc"><div class="mc-lbl">Avg days to exchange</div><div class="mc-val">38</div><div class="mc-sub">vs 52-day market avg</div></div>
+        <div class="mc"><div class="mc-lbl">AI actions today</div><div class="mc-val" style="color:var(--purple)">14</div><div class="mc-sub">Leads scored · Copies</div></div>
+      </div>
+      <div class="card" style="padding:0;overflow:hidden">
+        <div style="padding:12px 16px;border-bottom:1px solid var(--g200);display:flex;align-items:center;gap:10px"><span style="font-size:13px;font-weight:600">Sales pipeline — 13-stage lifecycle</span><span class="badge b-gray" style="margin-left:auto">18 active</span><button class="btn btn-s btn-sm">+ Add lead</button></div>
+        <div style="padding:12px">
+          <div class="pipeline-scroll">
+            <div class="pipeline-board">
+              <div class="pcol"><div class="pcol-hdr">Enquiry <div class="gate gate-g">● Open</div></div><div class="pcard"><div class="pcard-name">J. Nguyen</div><div class="pcard-sub">$1.2M · Blacktown</div><div style="margin-top:5px"><span class="badge b-red" style="font-size:10px">🤖 94</span></div></div><div class="pcard"><div class="pcard-name">S. Patel</div><div class="pcard-sub">$2.4M · Mosman</div><div style="margin-top:5px"><span class="badge b-red" style="font-size:10px">🤖 88</span></div></div><div class="pcard"><div class="pcard-name">M. Lee</div><div class="pcard-sub">$1.8M · Ryde</div><div style="margin-top:5px"><span class="badge b-amber" style="font-size:10px">🤖 67</span></div></div></div>
+              <div class="pcol"><div class="pcol-hdr">Listing <div class="gate gate-a">⚠ Gate</div></div><div class="pcard"><div class="pcard-name">22 George St</div><div class="pcard-sub">$2.1M · 12 days</div></div><div class="pcard"><div class="pcard-name">8 River Rd</div><div class="pcard-sub">$1.65M · 5 days</div></div></div>
+              <div class="pcol"><div class="pcol-hdr">Offers <div class="gate gate-g">● Open</div></div><div class="pcard"><div class="pcard-name">14 Palm Ave</div><div class="pcard-sub">3 offers · $1.75M+</div></div><div class="pcard"><div class="pcard-name">3 Cliff St</div><div class="pcard-sub">1 offer · $1.4M</div></div></div>
+              <div class="pcol"><div class="pcol-hdr">Exchange <div class="gate gate-r">● Alert</div></div><div class="pcard urgent"><div class="pcard-name">14 Merriwa St</div><div class="pcard-sub"><span class="badge b-red" style="font-size:10px">Cooling-off: 2d</span></div></div></div>
+              <div class="pcol"><div class="pcol-hdr">Finance <div class="gate gate-a">⚠ Gate</div></div><div class="pcard"><div class="pcard-name">9 Bay St</div><div class="pcard-sub">Finance due 8d</div></div><div class="pcard"><div class="pcard-name">5 Crown Ct</div><div class="pcard-sub">Bank val. booked</div></div></div>
+              <div class="pcol"><div class="pcol-hdr">Settlement <div class="gate gate-g">● Open</div></div><div class="pcard done"><div class="pcard-name">7 Ocean Dr</div><div class="pcard-sub"><span class="badge b-green" style="font-size:10px">Settled ✓</span></div></div><div class="pcard"><div class="pcard-name">2 Elm St</div><div class="pcard-sub">Settlement 5d</div></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="g2" style="margin-top:4px">
+        <div class="card"><div class="card-hdr"><div class="ctitle"><div class="cicon ci-red">💛</div> Post-sale engagement (Stage 12-13)</div></div><div class="crow"><span>7 Ocean Dr · NPS survey sent</span><span class="badge b-green">Delivered</span></div><div class="crow"><span>22 Coral Ln · 30-day check-in</span><span class="badge b-amber">Due today</span></div><div class="crow"><span>4 Park Rd · Referral received</span><span class="badge b-green">$2.3M lead</span></div><div style="margin-top:7px;font-size:12px;color:var(--g500);font-style:italic">80% of business from referrals and repeat clients</div></div>
+        <div class="card"><div class="card-hdr"><div class="ctitle"><div class="cicon ci-blue">📧</div> Automated sequences</div></div><div class="crow"><span>Open home follow-up</span><span class="badge b-blue">12 buyers</span></div><div class="crow"><span>Vendor weekly reports</span><span class="badge b-blue">4 sent</span></div><div class="crow"><span>Buyer alerts — new listings</span><span class="badge b-blue">38 subscribers</span></div></div>
+      </div>
+    </div>
+    <div class="screen" id="screen-compliance">
+      <div class="g2">
+        <div class="card"><div class="card-hdr"><div class="ctitle"><div class="cicon ci-red">🛡</div> Urgent compliance items</div><span class="badge b-red">2 urgent</span></div>
+          <div style="background:var(--red-lt);border-radius:8px;padding:11px 13px;margin-bottom:9px;border-left:4px solid var(--red)"><div style="font-weight:600;font-size:13px;color:#991b1b">22 George St — Cooling-off expiry</div><div style="font-size:12px;color:#b91c1c;margin-top:3px">NSW 5-day cooling-off expires in <strong>2 business days</strong>. Confirm buyer intent or prepare withdrawal procedure.</div><div style="display:flex;gap:7px;margin-top:9px"><button class="btn btn-sm" style="background:var(--red);color:#fff">Take action</button><button class="btn btn-s btn-sm">View transaction</button></div></div>
+          <div style="background:var(--amber-lt);border-radius:8px;padding:11px 13px;border-left:4px solid var(--amber)"><div style="font-weight:600;font-size:13px;color:#92400e">14 Palm Ave — Finance clause expiry</div><div style="font-size:12px;color:#b45309;margin-top:3px">Finance clause expires in <strong>5 days</strong>. Buyer must provide unconditional approval or request extension.</div><div style="display:flex;gap:7px;margin-top:9px"><button class="btn btn-sm" style="background:var(--amber);color:#fff">Contact buyer</button><button class="btn btn-s btn-sm">View transaction</button></div></div>
+        </div>
+        <div class="card"><div class="card-hdr"><div class="ctitle"><div class="cicon ci-green">✅</div> NSW compliance checklist</div><span class="badge b-green">8/10 clear</span></div><div class="crow"><span>Agency agreements current</span><span class="badge b-amber">⚠ 1 expiring</span></div><div class="crow"><span>Cooling-off periods tracked</span><span class="badge b-green">✓ All active</span></div><div class="crow"><span>Deposits in trust accounts</span><span class="badge b-green">✓ Confirmed</span></div><div class="crow"><span>Section 66W waivers on file</span><span class="badge b-green">✓ As required</span></div><div class="crow"><span>Finance clauses within 42 days</span><span class="badge b-red">⚠ 1 expiring</span></div><div class="crow"><span>GreenID identity checks</span><span class="badge b-green">✓ All parties</span></div><div class="crow"><span>PEXA settlement workspaces</span><span class="badge b-green">✓ Active</span></div><div class="crow"><span>Agent licence renewals</span><span class="badge b-green">✓ Current</span></div></div>
+      </div>
+    </div>
+    <div class="screen" id="screen-dto">
+      <div style="background:var(--navy);border-radius:12px;padding:18px 20px;text-align:center;margin-bottom:14px"><div style="font-size:12px;color:rgba(255,255,255,.5);margin-bottom:6px;text-transform:uppercase;letter-spacing:.06em">You save with Shilpi DTO</div><div style="font-size:32px;font-weight:700;color:#fff">$32,600 – $60,000</div><div style="font-size:13px;color:rgba(255,255,255,.5);margin-top:6px">vs traditional agent commission on a $1.5M property · Flat fee: $4,900</div></div>
+      <div class="g2">
+        <div>
+          <div style="font-size:13px;font-weight:600;color:var(--g700);margin-bottom:10px">Your DTO journey — 14 Merriwa St</div>
+          <div class="dto-step dto-done"><div class="dsn dsn-done">✓</div><div style="flex:1"><div class="st">List your property</div><div class="sd">Property profile created. Listing live with photos and planning intel.</div></div><span class="badge b-green">Complete</span></div>
+          <div class="dto-step dto-done"><div class="dsn dsn-done">✓</div><div style="flex:1"><div class="st">Buyers find you (intent search)</div><div class="sd">23 qualified buyers matching your R4 profile have viewed your listing.</div></div><span class="badge b-green">Active</span></div>
+          <div class="dto-step dto-active"><div class="dsn dsn-active">3</div><div style="flex:1"><div class="st">Receive & review offers</div><div class="sd">2 offers received directly. Review, negotiate, accept — no middleman. Full audit trail.</div></div><span class="badge b-teal">2 offers</span></div>
+          <div class="dto-step"><div class="dsn dsn-pending">4</div><div style="flex:1"><div class="st">Engage a conveyancer</div><div class="sd">Choose from the legal marketplace. Transparent fees, one-click engagement.</div></div><span class="badge b-gray">Pending</span></div>
+          <div class="dto-step"><div class="dsn dsn-pending">5</div><div style="flex:1"><div class="st">Digital contract exchange</div><div class="sd">Simultaneous digital signing. Exchange in minutes, not weeks.</div></div><span class="badge b-gray">Pending</span></div>
+          <div class="dto-step"><div class="dsn dsn-pending">6</div><div style="flex:1"><div class="st">Settlement & bank transfer</div><div class="sd">PEXA electronic settlement. Funds routed directly to your account.</div></div><span class="badge b-gray">Pending</span></div>
+        </div>
+        <div>
+          <div class="card"><div class="card-hdr"><div class="ctitle"><div class="cicon ci-green">📬</div> Offers received</div><span class="badge b-blue">2 offers</span></div>
+            <div style="border:1px solid var(--g200);border-radius:12px;padding:12px;margin-bottom:9px"><div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:7px"><div><div style="font-size:14px;font-weight:700;color:var(--navy)">$1,420,000</div><div style="font-size:12px;color:var(--g500)">Conditional · Finance + B&P · 52 days</div></div><span class="badge b-amber">Conditional</span></div><div style="font-size:12px;color:var(--g600);margin-bottom:8px">Buyer: R. Chen · Pre-approval $1.5M</div><div style="display:flex;gap:7px"><button class="btn btn-p btn-sm">Accept</button><button class="btn btn-s btn-sm">Counter</button><button class="btn btn-g btn-sm">Decline</button></div></div>
+            <div style="border:1px solid var(--g200);border-radius:12px;padding:12px"><div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:7px"><div><div style="font-size:14px;font-weight:700;color:var(--navy)">$1,390,000</div><div style="font-size:12px;color:var(--g500)">Unconditional · Cash · 30 days</div></div><span class="badge b-green">Unconditional</span></div><div style="font-size:12px;color:var(--g600);margin-bottom:8px">Buyer: K. Okafor · No financing conditions</div><div style="display:flex;gap:7px"><button class="btn btn-p btn-sm">Accept</button><button class="btn btn-s btn-sm">Counter</button><button class="btn btn-g btn-sm">Decline</button></div></div>
+          </div>
+          <div class="card"><div class="card-hdr"><div class="ctitle"><div class="cicon ci-teal">🔑</div> DTO flat fee</div></div><div class="irow"><span class="il">Platform fee</span><span class="iv" style="color:var(--teal)">$4,900 flat</span></div><div class="irow"><span class="il">Traditional agent (3%)</span><span class="iv" style="color:var(--red)">$43,500</span></div><div class="irow"><span class="il">Your saving</span><span class="iv" style="color:var(--green);font-weight:700">$38,600</span></div><div class="irow"><span class="il">Full legal protection</span><span class="iv">✓ Included</span></div><div class="irow"><span class="il">Settlement coordination</span><span class="iv">✓ Included</span></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="screen" id="screen-mobile">
+      <div style="text-align:center;margin-bottom:16px"><div style="font-size:13px;font-weight:600;color:var(--g700)">Mobile experience — agent on the go</div><div style="font-size:12px;color:var(--g500);margin-top:3px">Native iOS & Android apps · React Native</div></div>
+      <div style="display:flex;justify-content:center;gap:36px;padding:10px 0;flex-wrap:wrap">
+        <div>
+          <div class="phone"><div class="phone-notch"></div><div class="phone-screen">
+            <div class="mob-topbar"><div style="display:flex;align-items:center;gap:6px"><div style="font-size:13px;font-weight:700;color:#fff">S</div><span class="mob-title">Pipeline</span></div><div style="font-size:14px;color:rgba(255,255,255,.6)">🔔</div></div>
+            <div class="mob-content">
+              <div style="background:var(--red-lt);border-radius:8px;padding:8px 10px;margin-bottom:8px;font-size:11px;color:#B91C1C">⚠️ <strong>2 compliance alerts</strong> need attention</div>
+              <div class="mob-section">Hot leads — AI scored</div>
+              <div class="mob-pcard"><div style="display:flex;align-items:center;gap:7px"><div class="score-dot score-hot" style="width:26px;height:26px;font-size:10px">94</div><div><div style="font-size:11px;font-weight:600">J. Nguyen</div><div style="font-size:10px;color:var(--g500)">$1.2M · Call now</div></div></div></div>
+              <div class="mob-pcard"><div style="display:flex;align-items:center;gap:7px"><div class="score-dot score-hot" style="width:26px;height:26px;font-size:10px">88</div><div><div style="font-size:11px;font-weight:600">S. Patel</div><div style="font-size:10px;color:var(--g500)">$2.4M · Mosman</div></div></div></div>
+              <div class="mob-section">Active transactions</div>
+              <div class="mob-pcard urg"><div style="font-size:11px;font-weight:600">14 Merriwa St</div><div style="font-size:10px;color:var(--g500);margin-top:2px">Cooling-off: 2 days</div></div>
+              <div class="mob-pcard"><div style="font-size:11px;font-weight:600">9 Bay St</div><div style="font-size:10px;color:var(--g500);margin-top:2px">Finance due: 8 days</div></div>
+              <div class="mob-btn">+ Add inspection</div>
+            </div>
+          </div></div>
+          <div class="phone-lbl">Agent pipeline</div>
+        </div>
+        <div>
+          <div class="phone"><div class="phone-notch"></div><div class="phone-screen">
+            <div class="mob-topbar"><div style="display:flex;align-items:center;gap:6px"><div style="font-size:13px;font-weight:700;color:#fff">S</div><span class="mob-title">Open home</span></div><span style="font-size:10px;background:var(--green);color:#fff;padding:2px 6px;border-radius:99px">LIVE</span></div>
+            <div class="mob-content">
+              <div style="background:var(--navy);border-radius:8px;padding:10px;text-align:center;margin-bottom:8px"><div style="font-size:11px;font-weight:600;color:#fff">22 George St, Pyrmont</div><div style="font-size:10px;color:rgba(255,255,255,.5);margin-top:2px">Saturday 10:00-10:30am</div></div>
+              <div style="background:#fff;border:1px solid var(--g200);border-radius:8px;padding:12px;text-align:center;margin-bottom:8px"><div style="font-size:9px;color:var(--g500);margin-bottom:6px">SCAN TO SIGN IN</div><div style="width:54px;height:54px;background:var(--g900);margin:0 auto;border-radius:4px;display:flex;align-items:center;justify-content:center"><div style="display:grid;grid-template-columns:repeat(4,1fr);gap:2px;width:40px;height:40px"><div style="background:#fff"></div><div style="background:var(--g900)"></div><div style="background:#fff"></div><div style="background:var(--g900)"></div><div style="background:var(--g900)"></div><div style="background:#fff"></div><div style="background:var(--g900)"></div><div style="background:#fff"></div><div style="background:#fff"></div><div style="background:var(--g900)"></div><div style="background:#fff"></div><div style="background:var(--g900)"></div><div style="background:var(--g900)"></div><div style="background:#fff"></div><div style="background:var(--g900)"></div><div style="background:#fff"></div></div></div></div>
+              <div class="mob-section">Signed in today (6)</div>
+              <div class="mob-pcard" style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:11px;font-weight:500">Chen family</span><span class="badge b-red" style="font-size:10px">🤖 Hot</span></div>
+              <div class="mob-pcard" style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:11px;font-weight:500">M. Okafor</span><span class="badge b-amber" style="font-size:10px">🤖 Warm</span></div>
+              <div class="mob-btn">End & send follow-ups</div>
+            </div>
+          </div></div>
+          <div class="phone-lbl">Open home check-in</div>
+        </div>
+        <div>
+          <div class="phone"><div class="phone-notch"></div><div class="phone-screen">
+            <div class="mob-topbar"><span class="mob-title">Notifications</span><span style="font-size:10px;color:rgba(255,255,255,.5)">3 new</span></div>
+            <div class="mob-content">
+              <div class="mob-notif"><div class="mob-notif-icon" style="background:var(--red-lt)">⚠️</div><div style="flex:1"><div class="mob-notif-title">Compliance: Cooling-off</div><div class="mob-notif-sub">22 George St expires in 2 business days</div></div></div>
+              <div class="mob-notif"><div class="mob-notif-icon" style="background:var(--purple-lt)">🤖</div><div style="flex:1"><div class="mob-notif-title">AI: Vendor report ready</div><div class="mob-notif-sub">22 George St Week 4 — tap to review & send</div></div></div>
+              <div class="mob-notif"><div class="mob-notif-icon" style="background:var(--green-lt)">💬</div><div style="flex:1"><div class="mob-notif-title">Legal workspace update</div><div class="mob-notif-sub">Sarah R. added observation on 14 Merriwa St</div></div></div>
+              <div class="mob-notif"><div class="mob-notif-icon" style="background:var(--blue-lt)">🎯</div><div style="flex:1"><div class="mob-notif-title">AI: Hot lead detected</div><div class="mob-notif-sub">J. Nguyen scored 94/100 — call within 2 hours</div></div></div>
+              <div class="mob-notif"><div class="mob-notif-icon" style="background:var(--amber-lt)">✍️</div><div style="flex:1"><div class="mob-notif-title">AI: Listing copy ready</div><div class="mob-notif-sub">14 Merriwa St — review & publish to REA</div></div></div>
+            </div>
+          </div></div>
+          <div class="phone-lbl">Push notifications</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+<script>
+function go(id,navEl){
+  document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active')});
+  document.querySelectorAll('.nav-item').forEach(function(n){n.classList.remove('active')});
+  var el=document.getElementById('screen-'+id);
+  if(el)el.classList.add('active');
+  if(navEl)navEl.classList.add('active');
+  var t={'mode-select':'Home','dashboard':'Dashboard','search':'Property search','planning':'Planning intelligence — 14 Merriwa St, Blacktown','finance':'Financial readiness calculator','ai-listing':'AI listing copywriter','ai-leads':'AI lead intelligence','vendor-report':'AI vendor report writer','legal':'Legal marketplace','workspace':'Legal workspace — 14 Merriwa St','exchange':'Contract exchange — 14 Merriwa St','settlement':'Settlement ledger — 14 Merriwa St','crm':'CRM pipeline','compliance':'Compliance centre','dto':'Direct-to-owner journey','mobile':'Mobile view'};
+  document.getElementById('tbTitle').textContent=t[id]||id;
+}
+function setMode(el,mode){
+  document.querySelectorAll('.mode-btn').forEach(function(b){b.classList.remove('active')});
+  el.classList.add('active');
+  var f=document.getElementById('urole');
+  if(f)f.textContent='Principal · '+mode+' mode';
+}
+function tog(el){
+  var k=el.querySelector('span');
+  var on=k.style.left==='18px';
+  k.style.left=on?'3px':'18px';
+  el.style.background=on?'var(--g300)':'var(--blue)';
+}
+function pickModel(el){
+  document.querySelectorAll('.model-chip').forEach(function(c){c.classList.remove('active')});
+  el.classList.add('active');
+}
+function selLead(el){
+  document.querySelectorAll('#screen-ai-leads [onclick*=selLead]').forEach(function(c){c.style.background='#fff'});
+  el.style.background='var(--blue-lt)';
+}
+function runCopy(){
+  var g=document.getElementById('copyGen'),o=document.getElementById('copyOut');
+  g.style.display='block';o.style.display='none';
+  setTimeout(function(){g.style.display='none';o.style.display='block';},2000);
+}
+function genRpt(){
+  var g=document.getElementById('rptGen'),o=document.getElementById('rptOut');
+  g.style.display='block';o.style.display='none';
+  setTimeout(function(){g.style.display='none';o.style.display='block';},2000);
+}
+function calcFin(){
+  var raw=document.getElementById('fp').value.replace(/[^0-9]/g,'');
+  var p=parseInt(raw)||1450000;
+  var dep=parseInt(document.getElementById('dpSlider').value)||10;
+  var bt=document.getElementById('fbt').value;
+  var st=document.getElementById('fst').value;
+  var stamp=0;
+  if(st==='nsw'){
+    if(p<=16000)stamp=p*.0125;
+    else if(p<=35000)stamp=200+(p-16000)*.015;
+    else if(p<=93000)stamp=485+(p-35000)*.0175;
+    else if(p<=351000)stamp=1500+(p-93000)*.035;
+    else if(p<=1168000)stamp=10530+(p-351000)*.045;
+    else stamp=47295+(p-1168000)*.055;
+    if(bt==='fhb'&&p<=800000)stamp=0;
+    else if(bt==='fhb'&&p<=1000000)stamp=stamp*((p-800000)/200000);
+    document.getElementById('stLbl').textContent='NSW';
+  }else if(st==='vic'){stamp=p*.055;document.getElementById('stLbl').textContent='VIC';}
+  else{stamp=p<=350000?p*.01:3500+(p-350000)*.035;document.getElementById('stLbl').textContent='QLD';}
+  stamp=Math.round(stamp);
+  var depAmt=Math.round(p*dep/100);
+  var lvr=100-dep;
+  var lmi=lvr>80?Math.round(p*(lvr-80)/100*.015):0;
+  var fees=stamp+276+2200+lmi;
+  var total=depAmt+fees;
+  document.getElementById('sdVal').textContent='$'+stamp.toLocaleString();
+  document.getElementById('lmiVal').textContent=lmi>0?'$'+lmi.toLocaleString():'$0';
+  document.getElementById('tfVal').textContent='$'+fees.toLocaleString();
+  document.getElementById('tcVal').textContent='$'+total.toLocaleString();
+  document.getElementById('dAmt').textContent='$'+depAmt.toLocaleString();
+  document.getElementById('fAmt').textContent='$'+fees.toLocaleString();
+  document.getElementById('lvrBdg').textContent=lvr+'% LVR';
+  document.getElementById('lvrBdg').className='badge '+(lvr>90?'b-red':lvr>80?'b-amber':'b-green');
+  document.getElementById('lmiBdg').textContent=lmi>0?'⚠ Yes ($'+lmi.toLocaleString()+')':'✓ Not required';
+  document.getElementById('lmiBdg').className='badge '+(lmi>0?'b-amber':'b-green');
+  document.getElementById('fhbBdg').textContent=bt==='fhb'?(p<=800000?'✓ Full exemption':p<=1000000?'~ Partial':'✗ Over threshold'):'Not applicable';
+  document.getElementById('fhbBdg').className='badge '+(bt==='fhb'&&p<=800000?'b-green':'b-gray');
+}
+calcFin();
+</script>
+</body>
+</html>
