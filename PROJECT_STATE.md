@@ -2,8 +2,20 @@
 _Last updated: 2026-07-19 by Claude Code_
 
 ## Current slice
-Slice 1 — Lead to listing. **A-01 (sign-up) built and In review.** Foundation (Slice 0)
-complete except F-08 (Vercel). Local Supabase test bed now stood up.
+Slice 1 — Lead to listing. **A-01 (sign-up) built and In review.** **Slice 0 foundation
+complete, including F-08 — the app is deployed live on Vercel.** Local Supabase test bed stood up.
+
+## Deployment (F-08)
+- **Live:** https://shilpi-bice.vercel.app (Vercel project `shishirendu-shri-s-projects/shilpi`,
+  production, verified HTTP 200 — landing renders, Supabase env "configured").
+- Deployed via Vercel CLI (`vercel --prod`). `vercel.json` pins `framework: nextjs`.
+- Production env vars set on Vercel: `NEXT_PUBLIC_SUPABASE_URL` + `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+  point at the **cloud** project.
+- **Auto-deploy on push is NOT connected yet** — `vercel git connect` failed because the Vercel
+  GitHub App isn't installed on the account. Human action: connect the repo in the Vercel
+  dashboard (Project → Settings → Git). Until then, deploy manually with `vercel --prod`.
+- **Signup does not work in prod yet** — the cloud project lacks the 002/003/004 migrations and
+  has email confirmation on. Landing works; `/signup` needs the cloud DB brought up to date.
 
 ## Test suite
 **21 passing, 0 failing** (6 files) — was 8/8 last session.
@@ -66,9 +78,11 @@ Flagging for the architect.
 - **db:types deferred** (Layer 3). `supabase gen types --local` spins up a `postgres-meta`
   Docker container whose image won't pull over this machine's flaky egress (it hangs). Not needed
   yet (the client is untyped; tests pass). Pull the image / retry when the network is stable.
-- **Cloud parity**: the cloud project has only the base schema. Before signup works on cloud,
-  apply `002`, `003`, `004` there, and turn email confirmation OFF for Phase 1 (Auth settings).
-- **F-08** (Vercel) — human.
+- **Cloud parity (now also gates prod signup)**: the cloud project has only the base schema.
+  Before signup works on cloud (and on the live Vercel app), apply `002`, `003`, `004` there and
+  turn email confirmation OFF for Phase 1 (Auth settings).
+- **Vercel Git auto-deploy** — human: connect the repo in the Vercel dashboard (the CLI
+  `git connect` needs the Vercel GitHub App installed first).
 - The Supabase CLI (`db reset`, `gen types`, `init`) hangs on a telemetry call on this machine
   after doing its work — cosmetic (the DB ends up correct); verified via psql each time.
 
