@@ -10,7 +10,11 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
-    "db:check": "node --env-file=.env.local scripts/db-check.mjs"
+    "db:check": "node --env-file=.env.local scripts/db-check.mjs",
+    "db:start": "supabase start",
+    "db:stop": "supabase stop",
+    "db:reset": "supabase db reset",
+    "db:types": "supabase gen types typescript --local > src/platform/database.types.ts"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.3",
@@ -32,6 +36,7 @@
     "eslint": "^9.39.5",
     "eslint-config-next": "^16.2.10",
     "jsdom": "^29.1.1",
+    "supabase": "^2.109.1",
     "typescript": "^6.0.3",
     "vitest": "^4.1.10"
   }
