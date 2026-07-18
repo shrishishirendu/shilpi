@@ -2,8 +2,8 @@
 _Last updated: 2026-07-18 by Claude Code_
 
 ## Current slice
-Slice 0 — Foundation. F-03, F-04, F-05, F-06, F-07 done. F-01/F-02 (Supabase) and
-F-08 (Vercel) remain — both need the human.
+Slice 0 — Foundation. **F-01 through F-07 done.** Only F-08 (Vercel deploy) remains before
+Slice 1. Supabase project is live and the app connects to it (verified — see below).
 
 ## Test suite
 **8 passing, 0 failing** (3 files) — was 0/0 last session.
@@ -24,6 +24,12 @@ Gates: `npm run build` clean (TypeScript passes), `npm run lint` exit 0, `npm te
 - **F-06** — `platform` module built: Supabase server + browser clients (`@supabase/ssr`),
   `getCurrentUser` auth helper, `getCurrentAgencyId` tenancy resolver (mirrors the
   `current_agency_id()` SQL helper). Public server interface at `@/platform`.
+- **F-01 / F-02** — Supabase project live (ref `ahuafizfvepvbskgvixg`); schema applied by the
+  human. `.env.local` wired with URL + anon key. Connection **verified** via
+  `npm run db:check`: URL + anon key valid, `deal_stages` table present, and RLS correctly
+  returns 0 rows to anonymous reads (policy `stages_readable` is authenticated-only). The
+  13-row seed count is confirmed with an authenticated read in A-01, or `select count(*) from
+  deal_stages;` in the SQL editor.
 
 ## Stack as installed
 - Next.js 16.2 (App Router, Turbopack), React 19.2, TypeScript 6.
@@ -45,11 +51,9 @@ Gates: `npm run build` clean (TypeScript passes), `npm run lint` exit 0, `npm te
   `next build`; removed that config block. Lint is a separate gate now.
 
 ## Blockers / open questions
-- **F-01/F-02** (create Supabase project in `ap-southeast-2`; run
-  `supabase/shilpi_phase1_schema.sql`; verify 13 stages seeded) — human action. Until then
-  `.env.local` is empty and any real Supabase call throws the "not configured" error by
-  design. The app still builds, runs, and tests pass.
 - **F-08** (Vercel deploy) — needs the human's Vercel account.
+- Minor: confirm the `deal_stages` seed count is exactly 13 (via SQL editor or A-01's
+  authenticated read). Expected fine — schema + seed run together.
 
 ## Schema changes from the spec
 - None.
@@ -62,8 +66,9 @@ Gates: `npm run build` clean (TypeScript passes), `npm run lint` exit 0, `npm te
 - `platform` depends on no module, as required. No cycles.
 
 ## Next up
-1. **F-01/F-02** — human creates the Supabase project + runs the schema; then paste
-   URL + anon key into `.env.local` and I verify a real connection (13 stages seeded).
-2. **F-08** — deploy the empty app to Vercel to prove the pipeline early.
-3. Then **Slice 1** starts with **A-01** (sign-up creates agency + principal user) — the
-   first feature code, and the first real use of the `platform` auth/tenancy helpers.
+1. **Slice 1 / A-01** — sign-up creates an `agencies` row + a `users` row
+   (`role='principal'`, id = auth user id), tied to Supabase Auth. First feature code and the
+   first real use of the `platform` auth/tenancy helpers. Confirms the 13-stage seed via an
+   authenticated read along the way.
+2. **F-08** — deploy the empty app to Vercel to prove the pipeline early (can run in parallel;
+   human owns the Vercel account).
