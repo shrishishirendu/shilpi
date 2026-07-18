@@ -2,48 +2,68 @@
 _Last updated: 2026-07-18 by Claude Code_
 
 ## Current slice
-Slice 0 — Foundation (F-01 … F-08).
+Slice 0 — Foundation. F-03, F-04, F-05, F-06, F-07 done. F-01/F-02 (Supabase) and
+F-08 (Vercel) remain — both need the human.
+
+## Test suite
+**8 passing, 0 failing** (3 files) — was 0/0 last session.
+- `src/__tests__/smoke.test.ts` — framework sanity (F-05)
+- `src/platform/__tests__/env.test.ts` — Supabase env helper (4)
+- `src/platform/__tests__/tenancy.test.ts` — tenancy resolver logic (3)
+
+Gates: `npm run build` clean (TypeScript passes), `npm run lint` exit 0, `npm test` green.
 
 ## Done
-- Git repository initialised in the repo root. Remote `origin` →
-  `https://github.com/shrishishirendu/shilpi` (reachable, currently **empty** — nothing
-  pushed yet). Default branch renamed `master` → `main`.
-- **F-04 — module folder structure created per requirements §4.2.**
-  `/src/modules/{contacts,properties,deals,compliance,offers,ai}`, `/src/contracts`,
-  `/src/platform`. Each folder carries a `README.md` stating its boundary contract
-  (owns tables / depends on / never touches), plus `/src/README.md` restating the §4.3 rules.
-- **F-07 — this file created in the repo root.**
-- Added a standard Node/Next.js `.gitignore`.
+- Git repo + remote `origin` (https://github.com/shrishishirendu/shilpi), branch `main`.
+- **F-04** — module folder layout per §4.2, each with a README boundary contract.
+- **F-07** — this file.
+- **F-03** — Next.js app scaffolded (App Router + TypeScript), builds and prerenders.
+  Design tokens from the wireframe ported into `src/app/globals.css`. Foundation landing
+  page reports Supabase config status. `.env.example` + gitignored `.env.local`.
+- **F-05** — Vitest installed with one trivial passing test, before any feature code.
+- **F-06** — `platform` module built: Supabase server + browser clients (`@supabase/ssr`),
+  `getCurrentUser` auth helper, `getCurrentAgencyId` tenancy resolver (mirrors the
+  `current_agency_id()` SQL helper). Public server interface at `@/platform`.
 
-## In progress
-- Nothing half-built — scaffolding only, no application code yet.
+## Stack as installed
+- Next.js 16.2 (App Router, Turbopack), React 19.2, TypeScript 6.
+- Supabase: `@supabase/supabase-js` 2.x, `@supabase/ssr` 0.12.
+- Vitest 4 + Testing Library + jsdom. ESLint 9 (flat config) + eslint-config-next.
+- npm (no pnpm/yarn on this machine). Node 24.14.
 
 ## Decisions made this session
-- Read "check this layout" as the §4.2 module map (the wireframe is the *visual* spec, not a
-  folder layout).
-- Created the module folders as **documentation-only READMEs**, not `.ts` code — there is no
-  Next.js app / `tsconfig` to compile against yet. Each module's public interface
-  (`index.ts`) and internals will be added with their own Slice 1 stories, so we don't build
-  ahead of the current slice (D9).
-- Did **not** scaffold Next.js or install a test framework (F-03 / F-05): both add libraries,
-  which the requirements say to clear with the human first (§3, §10). Awaiting go-ahead.
+- Test runner: **Vitest** (human choice). Styling: **port the wireframe's plain CSS**
+  (CSS variables + CSS Modules), no Tailwind (human choice). Supabase: **scaffold
+  app-first, wire credentials later** (human choice).
+- Scaffolded Next.js **manually** (not `create-next-app`) to preserve the existing `/src`
+  module structure.
+- `create-next-app`'s default ESLint (`FlatCompat` + `eslint-config-next`) crashed with a
+  circular-reference error on ESLint 9 / Next 16. Fixed by using eslint-config-next's
+  **direct flat-config export** (`import next from "eslint-config-next"`). `next lint` is
+  removed in Next 16, so the lint script is now `eslint .`.
+- Next 16 dropped the `eslint` key in `next.config.mjs` and no longer runs ESLint during
+  `next build`; removed that config block. Lint is a separate gate now.
 
 ## Blockers / open questions
-- **F-01 / F-02** (create the Supabase project in `ap-southeast-2`; run
-  `supabase/shilpi_phase1_schema.sql`) need the human — these can't be done from here.
-- **F-03 / F-05 / F-06** not started — waiting on approval to scaffold Next.js + a test
-  framework before writing any feature code.
+- **F-01/F-02** (create Supabase project in `ap-southeast-2`; run
+  `supabase/shilpi_phase1_schema.sql`; verify 13 stages seeded) — human action. Until then
+  `.env.local` is empty and any real Supabase call throws the "not configured" error by
+  design. The app still builds, runs, and tests pass.
+- **F-08** (Vercel deploy) — needs the human's Vercel account.
 
 ## Schema changes from the spec
 - None.
 
 ## Module boundary notes
-- None strained yet — no code written.
+- `platform` has a **browser/server split**: `@/platform` (index.ts) is the server
+  interface and pulls in `next/headers`; Client Components must import the browser client
+  from `@/platform/supabase/browser` instead. This is the one sanctioned exception to
+  "import only from index.ts" — documented in `src/platform/README.md`.
+- `platform` depends on no module, as required. No cycles.
 
 ## Next up
-1. **F-03** — scaffold the Next.js app (App Router + TypeScript) that connects to Supabase.
-2. **F-05** — install a test framework; get one trivial test passing *before* any feature
-   code.
-3. **F-06** — build the `platform` module (DB client, auth helper, tenancy resolver).
-4. **F-08** — deploy the empty app to Vercel to prove the pipeline early.
-5. Then Slice 1 — Auth & tenancy (A-01 …).
+1. **F-01/F-02** — human creates the Supabase project + runs the schema; then paste
+   URL + anon key into `.env.local` and I verify a real connection (13 stages seeded).
+2. **F-08** — deploy the empty app to Vercel to prove the pipeline early.
+3. Then **Slice 1** starts with **A-01** (sign-up creates agency + principal user) — the
+   first feature code, and the first real use of the `platform` auth/tenancy helpers.

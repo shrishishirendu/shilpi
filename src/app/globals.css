@@ -1,0 +1,63 @@
+/*
+ * Shilpi — global styles.
+ * Design tokens ported from docs/Shilpi_Wireframe_v2.html (the visual spec).
+ * Keep this the single source of truth for colour + spacing tokens;
+ * screens consume these variables rather than hard-coding hex values.
+ */
+
+:root {
+  /* Brand */
+  --navy: #1e3a5f;
+  --blue: #2563eb;
+  --blue-lt: #dbeafe;
+  --blue-mid: #93c5fd;
+  --teal: #0f766e;
+  --teal-lt: #ccfbf1;
+
+  /* Status */
+  --green: #16a34a;
+  --green-lt: #dcfce7;
+  --amber: #d97706;
+  --amber-lt: #fef3c7;
+  --red: #dc2626;
+  --red-lt: #fee2e2;
+  --purple: #7c3aed;
+  --purple-lt: #ede9fe;
+
+  /* Greys */
+  --g50: #f8fafc;
+  --g100: #f1f5f9;
+  --g200: #e2e8f0;
+  --g300: #cbd5e1;
+  --g400: #94a3b8;
+  --g500: #64748b;
+  --g600: #475569;
+  --g700: #334155;
+  --g900: #0f172a;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  /* Inter is the wireframe font; wire it via next/font later. Falls back cleanly. */
+  font-family: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-size: 14px;
+  color: var(--g900);
+  background: var(--g50);
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: var(--blue);
+}

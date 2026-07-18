@@ -16,4 +16,26 @@ Rules:
 - Multi-tenancy is enforced in the database via Row Level Security, not just here. App-side
   tenancy resolution is a convenience, never the security boundary.
 
-Built in **F-06**, right after the app scaffold and test framework are in place.
+## Public interface (built — F-06)
+
+Server code imports from `@/platform`:
+
+```ts
+import {
+  createServerSupabaseClient, // Supabase client bound to the request's auth cookies
+  getCurrentUser,             // the logged-in auth.users user, or null
+  getCurrentAgencyId,         // tenancy resolver — mirrors current_agency_id() in SQL
+  isSupabaseConfigured,       // env presence check (never throws)
+  getSupabaseEnv,             // { url, anonKey } or throws a helpful error
+} from "@/platform";
+```
+
+**Client Components** import the browser client directly from
+`@/platform/supabase/browser` (`createBrowserSupabaseClient`). It is *not* re-exported from
+`@/platform`, because that barrel pulls in `next/headers` (server-only) via the server client
+— importing it from the browser would break the build. This browser/server split is the one
+sanctioned exception to "import only from index.ts".
+
+Files: `env.ts`, `supabase/{server,browser}.ts`, `auth.ts`, `tenancy.ts`, `index.ts`.
+Tests: `__tests__/{env,tenancy}.test.ts`. Logging is not built yet (added when a feature
+first needs it).
