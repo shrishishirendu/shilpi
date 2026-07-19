@@ -2,9 +2,10 @@
 _Last updated: 2026-07-19 by Claude Code_
 
 ## Current slice
-Slice 1 — Lead to listing. **A-01 (sign-up) and A-02 (log in / log out) built and In review.**
-**Slice 0 foundation complete, including F-08 — the app is deployed live on Vercel.** Local
-Supabase test bed stood up.
+Slice 1 — Lead to listing. **A-01 (sign-up), A-02 (log in / log out), and A-04 (dashboard
+shell) built and In review.** (A-03 RLS isolation is largely proven by the A-01/A-02 integration
+tests.) **Slice 0 foundation complete, including F-08 — the app is deployed live on Vercel.**
+Local Supabase test bed stood up.
 
 ## Deployment (F-08)
 - **Live:** https://shilpi-bice.vercel.app (Vercel project `shishirendu-shri-s-projects/shilpi`,
@@ -19,12 +20,16 @@ Supabase test bed stood up.
   has email confirmation on. Landing works; `/signup` needs the cloud DB brought up to date.
 
 ## Test suite
-**31 passing, 0 failing** (9 files) — was 21 earlier this session, 8 last session.
-- Unit: smoke (1), platform/env (4), platform/tenancy (3), signup/validate (6), signup/actions (5),
-  login/validate (3), login/actions (4)
+**39 passing, 0 failing** (13 files).
+- Unit: smoke (1), platform/env (4), platform/tenancy (3), platform/profile (4), signup/validate (6),
+  signup/actions (5), login/validate (3), login/actions (4).
+- Component (Testing Library): Sidebar (2), dashboard empty state (1).
 - Integration (local Supabase, `@vitest-environment node`): signup provisioning (2) — the real
   002 trigger creates agency + principal user, RLS isolation confirms A can't see B; login/logout
-  (3) — sign in with correct creds exposes the session, wrong password rejected, sign out clears it.
+  (3); profile query (1) — authenticated read of `users` + embedded `agencies.name` under RLS.
+
+Runtime-verified: dev server serves `/`, `/login`, `/signup` (200); unauthenticated `/dashboard`
+307-redirects to `/login` (the shell's auth gate).
 
 Gates: `npm test` green, `npm run build` clean (TypeScript passes), `npm run lint` exit 0 (0 warnings).
 
@@ -52,6 +57,12 @@ Gates: `npm test` green, `npm run build` clean (TypeScript passes), `npm run lin
   `/login` when signed out. **Session persistence** via `src/proxy.ts` (Next 16's renamed
   "middleware" convention) → `platform` `updateSession`, which refreshes the auth token on each
   request. Auth styles shared via `src/app/(auth)/auth.module.css` (signup migrated to it).
+- **A-04 — dashboard shell.** New `(app)` route group with a shared `layout.tsx` (the auth gate
+  for all app pages: no session → `/login`) rendering the wireframe shell — navy `Sidebar`
+  (client; nav with active state, "Soon" placeholders for unbuilt routes, user footer + logout)
+  and topbar. `/dashboard` now shows a real **empty state** (zeroed stat cards + "workspace is
+  ready" panel). `platform.getCurrentProfile()` added (user + role + agency name via a `users` →
+  `agencies` embed). Phase-2 wireframe items (AI agents, DTO, mode toggle) intentionally omitted.
 
 ## Two latent schema bugs caught by integration testing
 Both existed in the original schema and would have bitten later; the live-DB tests surfaced them.
@@ -79,8 +90,13 @@ Flagging for the architect.
   structure from the data model is unchanged; these are grants + a function-security fix.
 
 ## Module boundary notes
-- Signup server action lives in the app route (`src/app/(auth)/signup/actions.ts`) and uses
-  `@/platform` only. No cross-module table access. Boundaries hold.
+- Signup/login server actions live in the app routes and use `@/platform` only. No cross-module
+  table access. Boundaries hold.
+- The dashboard's stat cards are **static zeros**, not queried — the domain tables
+  (deals/contacts/properties) are owned by modules that don't exist yet, so we deliberately don't
+  reach into them. They get wired to real counts via those modules' interfaces later.
+- `platform.getCurrentProfile()` reads `users` + `agencies` — both tenancy tables, which are
+  platform's concern (not a domain module). Still no cycles; platform depends on no module.
 
 ## Blockers / open questions
 - **db:types deferred** (Layer 3). `supabase gen types --local` spins up a `postgres-meta`
@@ -95,8 +111,9 @@ Flagging for the architect.
   after doing its work — cosmetic (the DB ends up correct); verified via psql each time.
 
 ## Next up
-- **A-03** — dedicated RLS isolation test. Largely proven already by A-01/A-02 integration
-  tests; A-03 formalizes it across more tables.
-- **A-04** — empty dashboard shell after sign-up (replace the `/dashboard` placeholder).
-- Human: manual click-through of signup + login/logout to approve A-01/A-02; bring cloud
-  Supabase to parity (002/003/004 + confirmation off); connect Vercel Git auto-deploy.
+- **`contacts` module (C-01…)** — the first real domain feature: create / list / search / edit
+  contacts behind a narrow module interface. Then `properties`, then `deals` / pipeline.
+- **A-03** — formalize RLS isolation as its own test across more tables (already largely proven).
+- Human: manual click-through (signup → log out → log in → dashboard shell) to approve
+  A-01/A-02/A-04; bring cloud Supabase to parity (002/003/004 + confirmation off); connect
+  Vercel Git auto-deploy.

@@ -1,0 +1,224 @@
+/* App shell — sidebar + topbar + content. Ported from the wireframe. */
+
+.shell {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* ---------- Sidebar ---------- */
+.sidebar {
+  width: 228px;
+  flex-shrink: 0;
+  background: var(--navy);
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow-y: auto;
+}
+
+.logo {
+  padding: 18px 16px 14px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.logoMark {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 3px;
+}
+
+.logoK {
+  width: 32px;
+  height: 32px;
+  background: var(--blue);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.logoName {
+  font-size: 17px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.logoTag {
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.35);
+  margin-top: 1px;
+}
+
+.nav {
+  flex: 1;
+  padding: 4px 0 12px;
+}
+
+.navGroup {
+  padding: 12px 12px 4px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.28);
+}
+
+.navItem {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 7px 12px 7px 16px;
+  margin: 1px 6px;
+  border-radius: 8px;
+  font-size: 12.5px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.6);
+  text-decoration: none;
+  transition: 0.15s;
+  position: relative;
+}
+
+.navItem:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+}
+
+.navItemActive {
+  background: rgba(37, 99, 235, 0.38);
+  color: #fff;
+}
+
+.navItemActive::before {
+  content: "";
+  position: absolute;
+  left: -6px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 18px;
+  background: var(--blue-mid);
+  border-radius: 0 3px 3px 0;
+}
+
+/* Not-yet-built items: visible for orientation, but inert. */
+.navItemSoon {
+  color: rgba(255, 255, 255, 0.32);
+  cursor: default;
+}
+
+.navItemSoon:hover {
+  background: transparent;
+  color: rgba(255, 255, 255, 0.32);
+}
+
+.navIcon {
+  width: 18px;
+  text-align: center;
+}
+
+.soonTag {
+  margin-left: auto;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 99px;
+  padding: 1px 6px;
+}
+
+.sidebarFoot {
+  margin-top: auto;
+  padding: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.userRow {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 0 4px 10px;
+}
+
+.userAv {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--blue);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 600;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.userName {
+  font-size: 12px;
+  font-weight: 500;
+  color: #fff;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.userRole {
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.35);
+}
+
+.logoutBtn {
+  width: 100%;
+  height: 32px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 8px;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: 0.15s;
+}
+
+.logoutBtn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+}
+
+/* ---------- Main ---------- */
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  height: 100vh;
+}
+
+.topbar {
+  background: #fff;
+  border-bottom: 1px solid var(--g200);
+  padding: 0 22px;
+  height: 54px;
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.topbarTitle {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--g900);
+}
+
+.content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 22px;
+}

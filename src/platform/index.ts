@@ -14,3 +14,5 @@ export { getSupabaseEnv, isSupabaseConfigured } from "./env";
 export { createServerSupabaseClient } from "./supabase/server";
 export { getCurrentUser } from "./auth";
 export { getCurrentAgencyId } from "./tenancy";
+export type { CurrentProfile } from "./profile";
+export { getCurrentProfile } from "./profile";
