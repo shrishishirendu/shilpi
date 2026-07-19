@@ -3,9 +3,10 @@ _Last updated: 2026-07-19 by Claude Code_
 
 ## Current slice
 Slice 1 — Lead to listing. Auth block **(A-01 sign-up, A-02 log in/out, A-04 dashboard shell)**
-and the **`contacts` module (C-01…C-05)** built and In review. (A-03 RLS isolation is proven by
-integration tests.) **Slice 0 foundation complete, including F-08 — the app is deployed live on
-Vercel.** Local Supabase test bed stood up.
+plus the **`contacts` (C-01…C-05)** and **`properties` (P-01…P-04)** modules built and In review.
+(A-03 RLS isolation is proven by integration tests.) **Slice 0 foundation complete, including
+F-08 — the app is deployed live on Vercel** (auth + contacts validated end-to-end in prod). Local
+Supabase test bed stood up. **Next: the `deals` spine.**
 
 ## Deployment (F-08)
 - **Live:** https://shilpi-bice.vercel.app (Vercel project `shishirendu-shri-s-projects/shilpi`,
@@ -20,7 +21,9 @@ Vercel.** Local Supabase test bed stood up.
   has email confirmation on. Landing works; `/signup` needs the cloud DB brought up to date.
 
 ## Test suite
-**53 passing, 0 failing** (16 files).
+**68 passing, 0 failing** (19 files). Adds `properties`: validate (7) + actions (3) unit, and a
+repository integration test (5) — CRUD + RLS isolation across two agencies, incl. "can't create
+for another agency" (WITH CHECK) and the `state` default (NSW).
 - Unit: smoke, platform/env (4), platform/tenancy (3), platform/profile (4), signup/validate (6),
   signup/actions (5), login/validate (3), login/actions (4), contacts/validate (5),
   contacts/actions (3).
@@ -70,6 +73,11 @@ Gates: `npm test` green, `npm run build` clean (TypeScript passes), `npm run lin
   repository takes the Supabase client as a param (testable), `index.ts` wires it to platform.
   UI in `src/app/(app)/contacts/` — list + name search (C-02/C-03), create (C-01), view/edit
   (C-04). Sidebar "Contacts" is now a live link.
+- **`properties` module (P-01…P-04)** — same shape as contacts (owns `properties`, narrow
+  interface, client-injected repository). Fields: address (req) + suburb/postcode/state/type/
+  beds/baths/parking/land-size/zoning. UI list (P-02), create (P-01), view/edit (P-03) with a
+  `PropertyForm` (type `<select>` + numeric inputs). No Phase-1 search (that's a later slice).
+  Sidebar "Properties" is now a live link.
 
 ## Two latent schema bugs caught by integration testing
 Both existed in the original schema and would have bitten later; the live-DB tests surfaced them.
@@ -106,7 +114,12 @@ Flagging for the architect.
   platform's concern (not a domain module). Still no cycles; platform depends on no module.
 - **`contacts` sets the module pattern**: it owns `contacts`, depends only on `platform`, and
   exposes a narrow `index.ts`. The app (server actions/pages) imports only `@/modules/contacts`,
-  never `internal/*`. `properties` and `deals` will follow the same shape.
+  never `internal/*`. `properties` follows the same shape; `deals` will too.
+- **Client/server import gotcha (learned building `properties`):** a **Client Component** must not
+  import a *value* from a module's `index.ts`, because that barrel pulls in `platform`'s server
+  client (`next/headers`) and the build fails. `import type` is fine (erased). Fix: pass such
+  values in as props from the server page. (`PropertyForm` gets `PROPERTY_TYPES` as a prop.)
+  The build — not the tests — catches this, so `npm run build` stays part of every gate.
 
 ## Blockers / open questions
 - **db:types deferred** (Layer 3). `supabase gen types --local` spins up a `postgres-meta`
@@ -121,9 +134,10 @@ Flagging for the architect.
   after doing its work — cosmetic (the DB ends up correct); verified via psql each time.
 
 ## Next up
-- **`properties` module (P-01…P-04)** — same shape as `contacts`: create / list / view / edit,
-  narrow interface. Then **`deals`** (D-01…) — the spine that ties contacts + properties together.
+- **`deals` module (D-01…D-08)** — the 13-stage spine. The big one: owns `deals`, `deal_contacts`
+  (links contacts with a role — this is where D2 pays off), `deal_stages`, `stage_history`
+  (append-only). Create a deal, link buyer/vendor contacts, render the pipeline board by stage,
+  advance stages. Depends on `contacts` + `properties` via their interfaces.
 - **A-03** — formalize RLS isolation as its own test (already largely proven).
-- Human: manual click-through to approve A-01/A-02/A-04 and the contacts CRUD (sign up → add /
-  search / edit a contact); bring cloud Supabase to parity (002/003/004 + confirmation off);
-  connect Vercel Git auto-deploy.
+- Human: manual click-through to approve the built stories; the `properties` CRUD isn't yet
+  deployed to prod (I'll `vercel --prod` when you want it live); connect Vercel Git auto-deploy.

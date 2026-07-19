@@ -28,6 +28,10 @@ describe("Sidebar", () => {
       "href",
       "/contacts",
     );
+    expect(screen.getByRole("link", { name: /properties/i })).toHaveAttribute(
+      "href",
+      "/properties",
+    );
     expect(screen.getByText("Ada Vendor")).toBeInTheDocument();
     expect(
       screen.getByText(/principal · harbour realty/i),

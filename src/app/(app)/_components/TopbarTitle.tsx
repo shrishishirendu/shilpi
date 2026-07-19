@@ -7,6 +7,9 @@ function titleFor(pathname: string): string {
   if (pathname === "/contacts") return "Contacts";
   if (pathname === "/contacts/new") return "New contact";
   if (pathname.startsWith("/contacts/")) return "Contact";
+  if (pathname === "/properties") return "Properties";
+  if (pathname === "/properties/new") return "New property";
+  if (pathname.startsWith("/properties/")) return "Property";
   return "Shilpi";
 }
 

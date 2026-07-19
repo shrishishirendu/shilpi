@@ -27,7 +27,7 @@ const NAV: { group: string; items: NavEntry[] }[] = [
     items: [
       { label: "CRM pipeline", icon: "👥", soon: true },
       { label: "Contacts", icon: "🧑", href: "/contacts" },
-      { label: "Properties", icon: "🏠", soon: true },
+      { label: "Properties", icon: "🏠", href: "/properties" },
       { label: "Compliance", icon: "🛡️", soon: true },
     ],
   },
