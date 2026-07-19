@@ -2,13 +2,14 @@
 _Last updated: 2026-07-19 by Claude Code_
 
 ## Current slice
-Slice 1 — Lead to listing. **Build complete.** Auth block (A-01/A-02/A-04) + the `contacts`
-(C-01…C-05), `properties` (P-01…P-04), and `deals` (D-01…D-08) modules — all In review. The
-`deals` spine ties it together: pipeline board, deal↔contact links with roles (D2), and stage
-advancement with an append-only history. A-03 (RLS isolation) and D-03 (one contact, two roles,
-two deals) are both proven by integration tests. Slice 0 done incl. F-08 (live on Vercel; auth +
-contacts + properties validated in prod). **Next: Slice 1 exit criteria — human approvals + get
-`deals` onto prod.**
+**Slice 2 — Offers: build complete.** The `offers` module (O-01…O-06) is built on top of a
+fully-built Slice 1. Submit / counter / accept / reject / withdraw offers on a deal; **accepting
+advances the deal stage** — the first real cross-module *call* (offers → deals). Offers live on the
+deal detail page.
+
+Slice 1 (Lead to listing) — auth (A-01/A-02/A-04) + `contacts`, `properties`, `deals` — is fully
+built and validated end-to-end in prod (live on Vercel). All stories In review; A-03 (RLS) and
+D-03 (one contact, two roles, two deals — validates D2) proven by integration tests.
 
 ## Deployment (F-08)
 - **Live:** https://shilpi-bice.vercel.app (Vercel project `shishirendu-shri-s-projects/shilpi`,
@@ -23,7 +24,10 @@ contacts + properties validated in prod). **Next: Slice 1 exit criteria — huma
   has email confirmation on. Landing works; `/signup` needs the cloud DB brought up to date.
 
 ## Test suite
-**79 passing, 0 failing** (21 files). `deals` adds a repository integration test (5) —
+**93 passing, 0 failing** (25 files). `offers` adds: validate (3) + `acceptOffer` orchestration
+unit (3, mocked — verifies it calls `deals.advanceDealStage` then marks accepted) + offer-actions
+unit (4) + repository integration (4, CRUD + status lifecycle + RLS isolation: agency B can't see
+or add offers to A's deal). `deals` adds a repository integration test (5) —
 **D-01 create at stage 1, D-02 link role, D-03 one contact = vendor on deal 1 + buyer on deal 2
 (validates D2), D-04 history-on-create, D-06 advance-writes-history, D-07 append-only (the app
 role's delete/update on stage_history is rejected)** — plus action unit tests (4). `properties`
@@ -92,6 +96,12 @@ Gates: `npm test` green, `npm run build` clean (TypeScript passes), `npm run lin
   `src/app/(app)/deals/`: pipeline board (D-05, 13 stage columns, cards show address + primary
   contact), create (D-01), detail (link contacts with roles D-02, advance stage D-06, stage
   history timeline). All server-action forms — no client components. Nav "CRM pipeline" → `/deals`.
+- **`offers` module (O-01…O-06) — Slice 2.** Owns `offers`. `submitOffer` (O-01),
+  `listOffersForDeal` (O-04, buyer name hydrated via `contacts`), `counter/reject/withdraw` (O-02),
+  and `acceptOffer` (O-05) which **advances the deal stage via `deals.advanceDealStage`** — the
+  module's one cross-module *call*, and the O-06 boundary case. Conditional offers (finance/B&P)
+  via `is_conditional` + `conditions` (O-03). UI is an **Offers section on the deal detail page**
+  (list + submit form + per-offer status buttons) — no separate route.
 
 ## Two latent schema bugs caught by integration testing
 Both existed in the original schema and would have bitten later; the live-DB tests surfaced them.
@@ -145,6 +155,9 @@ Flagging for the architect.
   embedded — intra-module). Property/contact data is fetched through the `properties`/`contacts`
   interfaces (`getPropertiesByIds`/`getContactsByIds`) and merged in `index.ts`. Dependency stays
   one-way (deals → contacts/properties); no cycle.
+- **`offers` → `deals` is the first cross-module *call*.** `acceptOffer` invokes
+  `deals.advanceDealStage` (via the interface, not the tables). `offers` depends on `deals` +
+  `contacts`; still one-way (nothing depends back on `offers`), no cycle. Good boundary test (O-06).
 
 ## Blockers / open questions
 - **db:types deferred** (Layer 3). `supabase gen types --local` spins up a `postgres-meta`
@@ -159,11 +172,11 @@ Flagging for the architect.
   after doing its work — cosmetic (the DB ends up correct); verified via psql each time.
 
 ## Next up
-- **Slice 1 exit criteria** — the build is done; what remains is: human **Approves** the stories,
-  manual click-through of the whole flow, and everything deployed. Then Slice 1 closes.
-- **Get `deals` working on prod** — deploy (`vercel --prod`) **and** apply migration `005` to the
-  cloud project (the trigger + append-only revoke), so the pipeline works live.
-- **A-03** — optionally formalize RLS isolation as its own dedicated test (already proven across
-  contacts/properties/deals integration tests).
-- Then **Slice 2 — Offers** (O-01…), or the deferred infra (Vercel Git auto-deploy, `db:types`,
-  CI, the layered instructions doc).
+- **Offers to prod** — just a deploy. Offers uses the existing `offers` table (already in `001`),
+  so **no new cloud migration is needed** (unlike `deals`/`005`). `deals`+`005` are already on cloud.
+- **Slice 3 — Compliance (X-01…)** ⚠️ — the deterministic compliance layer (cooling-off, stamp
+  duty, finance deadlines). **Requires human + solicitor verification of the LOGIC**, not just green
+  tests (decision D3). Pause and confirm before shipping any of it.
+- **Deferred infra** — Vercel Git auto-deploy (human dashboard step), CI (`ci.yml`), `db:types`,
+  the layered instructions doc.
+- Human: formally **Approve** the built stories to close Slices 1 & 2.

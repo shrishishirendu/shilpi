@@ -413,3 +413,153 @@
   font-size: 11px;
   color: var(--g400);
 }
+
+/* ---------- Offers ---------- */
+.offer {
+  border: 1px solid var(--g200);
+  border-radius: 12px;
+  padding: 12px 14px;
+  margin-bottom: 10px;
+}
+
+.offerTop {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.offerAmount {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--g900);
+}
+
+.offerBuyer {
+  font-size: 12.5px;
+  color: var(--g500);
+}
+
+.oStatus {
+  margin-left: auto;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  border-radius: 99px;
+  padding: 2px 9px;
+}
+.oStatus_submitted {
+  color: var(--blue);
+  background: var(--blue-lt);
+}
+.oStatus_countered {
+  color: var(--amber);
+  background: var(--amber-lt);
+}
+.oStatus_accepted {
+  color: var(--green);
+  background: var(--green-lt);
+}
+.oStatus_rejected {
+  color: var(--red);
+  background: var(--red-lt);
+}
+.oStatus_withdrawn {
+  color: var(--g500);
+  background: var(--g100);
+}
+
+.offerMeta {
+  margin-top: 6px;
+  font-size: 12px;
+  color: var(--g500);
+}
+
+.offerActions {
+  display: flex;
+  gap: 6px;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
+
+.oBtn {
+  height: 30px;
+  padding: 0 12px;
+  border: 1px solid var(--g300);
+  border-radius: 7px;
+  background: #fff;
+  color: var(--g700);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.oBtn:hover {
+  background: var(--g50);
+}
+.oBtnAccept {
+  border-color: var(--green);
+  color: var(--green);
+}
+.oBtnAccept:hover {
+  background: var(--green-lt);
+}
+
+.submitOffer {
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid var(--g100);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.offerFormRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.offerField {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.offerLabel {
+  font-size: 11px;
+  color: var(--g500);
+}
+
+.offerInput {
+  height: 34px;
+  padding: 0 10px;
+  border: 1px solid var(--g300);
+  border-radius: 8px;
+  font-size: 12.5px;
+  background: #fff;
+}
+
+.offerTextarea {
+  padding: 8px 10px;
+  border: 1px solid var(--g300);
+  border-radius: 8px;
+  font-size: 12.5px;
+  resize: vertical;
+}
+
+.submitOfferBtn {
+  align-self: flex-start;
+  height: 34px;
+  padding: 0 16px;
+  border: none;
+  border-radius: 8px;
+  background: var(--blue);
+  color: #fff;
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.submitOfferBtn:hover {
+  background: #1d4ed8;
+}
