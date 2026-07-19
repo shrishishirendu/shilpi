@@ -9,6 +9,9 @@ These files are the point-in-time narrative — they are not edited after the se
 
 ## Log
 
+- [Session 6 — 2026-07-20](2026-07-20-session-06.md) — **Slice 2 (Offers) built + live**; first
+  cross-module *call* (`offers.acceptOffer` → `deals.advanceDealStage`); dashboard wired to real
+  counts; sample seed script.
 - [Session 5 — 2026-07-19](2026-07-19-session-05.md) — **Slice 1 build complete**: `properties`
   (P-01–P-04) + the `deals` spine (D-01–D-08); pipeline board, deal↔contact roles, append-only
   stage history. Full lead-to-listing slice validated end-to-end in production.
