@@ -24,6 +24,10 @@ describe("Sidebar", () => {
       "/dashboard",
     );
     expect(screen.getByText("CRM pipeline")).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /contacts/i })).toHaveAttribute(
+      "href",
+      "/contacts",
+    );
     expect(screen.getByText("Ada Vendor")).toBeInTheDocument();
     expect(
       screen.getByText(/principal · harbour realty/i),

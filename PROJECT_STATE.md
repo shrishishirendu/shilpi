@@ -2,10 +2,10 @@
 _Last updated: 2026-07-19 by Claude Code_
 
 ## Current slice
-Slice 1 — Lead to listing. **A-01 (sign-up), A-02 (log in / log out), and A-04 (dashboard
-shell) built and In review.** (A-03 RLS isolation is largely proven by the A-01/A-02 integration
-tests.) **Slice 0 foundation complete, including F-08 — the app is deployed live on Vercel.**
-Local Supabase test bed stood up.
+Slice 1 — Lead to listing. Auth block **(A-01 sign-up, A-02 log in/out, A-04 dashboard shell)**
+and the **`contacts` module (C-01…C-05)** built and In review. (A-03 RLS isolation is proven by
+integration tests.) **Slice 0 foundation complete, including F-08 — the app is deployed live on
+Vercel.** Local Supabase test bed stood up.
 
 ## Deployment (F-08)
 - **Live:** https://shilpi-bice.vercel.app (Vercel project `shishirendu-shri-s-projects/shilpi`,
@@ -20,16 +20,17 @@ Local Supabase test bed stood up.
   has email confirmation on. Landing works; `/signup` needs the cloud DB brought up to date.
 
 ## Test suite
-**39 passing, 0 failing** (13 files).
-- Unit: smoke (1), platform/env (4), platform/tenancy (3), platform/profile (4), signup/validate (6),
-  signup/actions (5), login/validate (3), login/actions (4).
+**53 passing, 0 failing** (16 files).
+- Unit: smoke, platform/env (4), platform/tenancy (3), platform/profile (4), signup/validate (6),
+  signup/actions (5), login/validate (3), login/actions (4), contacts/validate (5),
+  contacts/actions (3).
 - Component (Testing Library): Sidebar (2), dashboard empty state (1).
-- Integration (local Supabase, `@vitest-environment node`): signup provisioning (2) — the real
-  002 trigger creates agency + principal user, RLS isolation confirms A can't see B; login/logout
-  (3); profile query (1) — authenticated read of `users` + embedded `agencies.name` under RLS.
+- Integration (local Supabase, `@vitest-environment node`): signup provisioning (2); login/logout
+  (3); profile query (1); **contacts repository (6)** — CRUD + RLS isolation across two agencies,
+  including "can't create a contact for another agency" (RLS WITH CHECK).
 
-Runtime-verified: dev server serves `/`, `/login`, `/signup` (200); unauthenticated `/dashboard`
-307-redirects to `/login` (the shell's auth gate).
+Runtime-verified earlier: dev server serves `/`, `/login`, `/signup` (200); unauthenticated
+`/dashboard` 307-redirects to `/login` (the `(app)` shell auth gate, which also guards `/contacts`).
 
 Gates: `npm test` green, `npm run build` clean (TypeScript passes), `npm run lint` exit 0 (0 warnings).
 
@@ -63,6 +64,12 @@ Gates: `npm test` green, `npm run build` clean (TypeScript passes), `npm run lin
   and topbar. `/dashboard` now shows a real **empty state** (zeroed stat cards + "workspace is
   ready" panel). `platform.getCurrentProfile()` added (user + role + agency name via a `users` →
   `agencies` embed). Phase-2 wireframe items (AI agents, DTO, mode toggle) intentionally omitted.
+- **`contacts` module (C-01…C-05)** — the first real domain module. Owns the `contacts` table
+  behind a narrow public interface (`src/modules/contacts/index.ts`: create/list/search/get/update
+  + `validateContact` + types). Internals in `internal/{types,validate,repository}.ts`; the
+  repository takes the Supabase client as a param (testable), `index.ts` wires it to platform.
+  UI in `src/app/(app)/contacts/` — list + name search (C-02/C-03), create (C-01), view/edit
+  (C-04). Sidebar "Contacts" is now a live link.
 
 ## Two latent schema bugs caught by integration testing
 Both existed in the original schema and would have bitten later; the live-DB tests surfaced them.
@@ -97,6 +104,9 @@ Flagging for the architect.
   reach into them. They get wired to real counts via those modules' interfaces later.
 - `platform.getCurrentProfile()` reads `users` + `agencies` — both tenancy tables, which are
   platform's concern (not a domain module). Still no cycles; platform depends on no module.
+- **`contacts` sets the module pattern**: it owns `contacts`, depends only on `platform`, and
+  exposes a narrow `index.ts`. The app (server actions/pages) imports only `@/modules/contacts`,
+  never `internal/*`. `properties` and `deals` will follow the same shape.
 
 ## Blockers / open questions
 - **db:types deferred** (Layer 3). `supabase gen types --local` spins up a `postgres-meta`
@@ -111,9 +121,9 @@ Flagging for the architect.
   after doing its work — cosmetic (the DB ends up correct); verified via psql each time.
 
 ## Next up
-- **`contacts` module (C-01…)** — the first real domain feature: create / list / search / edit
-  contacts behind a narrow module interface. Then `properties`, then `deals` / pipeline.
-- **A-03** — formalize RLS isolation as its own test across more tables (already largely proven).
-- Human: manual click-through (signup → log out → log in → dashboard shell) to approve
-  A-01/A-02/A-04; bring cloud Supabase to parity (002/003/004 + confirmation off); connect
-  Vercel Git auto-deploy.
+- **`properties` module (P-01…P-04)** — same shape as `contacts`: create / list / view / edit,
+  narrow interface. Then **`deals`** (D-01…) — the spine that ties contacts + properties together.
+- **A-03** — formalize RLS isolation as its own test (already largely proven).
+- Human: manual click-through to approve A-01/A-02/A-04 and the contacts CRUD (sign up → add /
+  search / edit a contact); bring cloud Supabase to parity (002/003/004 + confirmation off);
+  connect Vercel Git auto-deploy.

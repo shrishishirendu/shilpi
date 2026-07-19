@@ -2,12 +2,15 @@
 
 import { usePathname } from "next/navigation";
 
-const TITLES: Record<string, string> = {
-  "/dashboard": "Dashboard",
-};
+function titleFor(pathname: string): string {
+  if (pathname === "/dashboard") return "Dashboard";
+  if (pathname === "/contacts") return "Contacts";
+  if (pathname === "/contacts/new") return "New contact";
+  if (pathname.startsWith("/contacts/")) return "Contact";
+  return "Shilpi";
+}
 
 export function TopbarTitle() {
   const pathname = usePathname();
-  const title = TITLES[pathname] ?? "Shilpi";
-  return <span>{title}</span>;
+  return <span>{titleFor(pathname)}</span>;
 }

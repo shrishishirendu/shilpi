@@ -26,7 +26,7 @@ const NAV: { group: string; items: NavEntry[] }[] = [
     group: "Agency",
     items: [
       { label: "CRM pipeline", icon: "👥", soon: true },
-      { label: "Contacts", icon: "🧑", soon: true },
+      { label: "Contacts", icon: "🧑", href: "/contacts" },
       { label: "Properties", icon: "🏠", soon: true },
       { label: "Compliance", icon: "🛡️", soon: true },
     ],
@@ -54,6 +54,8 @@ export function Sidebar({
   agencyName: string;
 }) {
   const pathname = usePathname();
+  const isActive = (href: string) =>
+    pathname === href || pathname.startsWith(href + "/");
 
   return (
     <aside className={styles.sidebar}>
@@ -77,7 +79,7 @@ export function Sidebar({
                   key={item.label}
                   href={item.href}
                   className={`${styles.navItem} ${
-                    pathname === item.href ? styles.navItemActive : ""
+                    isActive(item.href) ? styles.navItemActive : ""
                   }`}
                 >
                   <span className={styles.navIcon}>{item.icon}</span>
