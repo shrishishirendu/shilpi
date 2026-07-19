@@ -9,6 +9,9 @@ These files are the point-in-time narrative — they are not edited after the se
 
 ## Log
 
+- [Session 5 — 2026-07-19](2026-07-19-session-05.md) — **Slice 1 build complete**: `properties`
+  (P-01–P-04) + the `deals` spine (D-01–D-08); pipeline board, deal↔contact roles, append-only
+  stage history. Full lead-to-listing slice validated end-to-end in production.
 - [Session 4 — 2026-07-19](2026-07-19-session-04.md) — A-02 (login/out), A-04 (dashboard shell),
   and the `contacts` module (C-01–C-05) built; cloud brought to parity; **auth + contacts
   validated end-to-end in production**.
