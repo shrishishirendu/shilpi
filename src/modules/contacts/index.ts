@@ -13,6 +13,7 @@ import {
   selectContacts,
   searchContactsByName,
   selectContactById,
+  selectContactsByIds,
   updateContactById,
 } from "./internal/repository";
 import type { Contact, ContactUpdate, NewContact } from "./internal/types";
@@ -40,6 +41,11 @@ export async function searchContacts(query: string): Promise<Contact[]> {
 export async function getContact(id: string): Promise<Contact | null> {
   const supabase = await createServerSupabaseClient();
   return selectContactById(supabase, id);
+}
+
+export async function getContactsByIds(ids: string[]): Promise<Contact[]> {
+  const supabase = await createServerSupabaseClient();
+  return selectContactsByIds(supabase, ids);
 }
 
 export async function updateContact(

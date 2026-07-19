@@ -121,3 +121,17 @@ export async function updatePropertyById(
   if (error) throw new Error(error.message);
   return toProperty(data as PropertyRow);
 }
+
+/** Fetch several properties by id (agency-scoped by RLS). For cross-module hydration. */
+export async function selectPropertiesByIds(
+  supabase: SupabaseClient,
+  ids: string[],
+): Promise<Property[]> {
+  if (ids.length === 0) return [];
+  const { data, error } = await supabase
+    .from("properties")
+    .select(COLUMNS)
+    .in("id", ids);
+  if (error) throw new Error(error.message);
+  return (data as PropertyRow[]).map(toProperty);
+}

@@ -124,3 +124,17 @@ export async function updateContactById(
   if (error) throw new Error(error.message);
   return toContact(data as ContactRow);
 }
+
+/** Fetch several contacts by id (agency-scoped by RLS). For cross-module hydration. */
+export async function selectContactsByIds(
+  supabase: SupabaseClient,
+  ids: string[],
+): Promise<Contact[]> {
+  if (ids.length === 0) return [];
+  const { data, error } = await supabase
+    .from("contacts")
+    .select(COLUMNS)
+    .in("id", ids);
+  if (error) throw new Error(error.message);
+  return (data as ContactRow[]).map(toContact);
+}

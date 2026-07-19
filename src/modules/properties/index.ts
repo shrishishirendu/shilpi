@@ -8,6 +8,7 @@ import {
   insertProperty,
   selectProperties,
   selectPropertyById,
+  selectPropertiesByIds,
   updatePropertyById,
 } from "./internal/repository";
 import type { NewProperty, Property, PropertyUpdate } from "./internal/types";
@@ -36,6 +37,11 @@ export async function listProperties(): Promise<Property[]> {
 export async function getProperty(id: string): Promise<Property | null> {
   const supabase = await createServerSupabaseClient();
   return selectPropertyById(supabase, id);
+}
+
+export async function getPropertiesByIds(ids: string[]): Promise<Property[]> {
+  const supabase = await createServerSupabaseClient();
+  return selectPropertiesByIds(supabase, ids);
 }
 
 export async function updateProperty(

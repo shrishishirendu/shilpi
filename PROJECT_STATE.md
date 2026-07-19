@@ -2,11 +2,13 @@
 _Last updated: 2026-07-19 by Claude Code_
 
 ## Current slice
-Slice 1 — Lead to listing. Auth block **(A-01 sign-up, A-02 log in/out, A-04 dashboard shell)**
-plus the **`contacts` (C-01…C-05)** and **`properties` (P-01…P-04)** modules built and In review.
-(A-03 RLS isolation is proven by integration tests.) **Slice 0 foundation complete, including
-F-08 — the app is deployed live on Vercel** (auth + contacts validated end-to-end in prod). Local
-Supabase test bed stood up. **Next: the `deals` spine.**
+Slice 1 — Lead to listing. **Build complete.** Auth block (A-01/A-02/A-04) + the `contacts`
+(C-01…C-05), `properties` (P-01…P-04), and `deals` (D-01…D-08) modules — all In review. The
+`deals` spine ties it together: pipeline board, deal↔contact links with roles (D2), and stage
+advancement with an append-only history. A-03 (RLS isolation) and D-03 (one contact, two roles,
+two deals) are both proven by integration tests. Slice 0 done incl. F-08 (live on Vercel; auth +
+contacts + properties validated in prod). **Next: Slice 1 exit criteria — human approvals + get
+`deals` onto prod.**
 
 ## Deployment (F-08)
 - **Live:** https://shilpi-bice.vercel.app (Vercel project `shishirendu-shri-s-projects/shilpi`,
@@ -21,9 +23,12 @@ Supabase test bed stood up. **Next: the `deals` spine.**
   has email confirmation on. Landing works; `/signup` needs the cloud DB brought up to date.
 
 ## Test suite
-**68 passing, 0 failing** (19 files). Adds `properties`: validate (7) + actions (3) unit, and a
-repository integration test (5) — CRUD + RLS isolation across two agencies, incl. "can't create
-for another agency" (WITH CHECK) and the `state` default (NSW).
+**79 passing, 0 failing** (21 files). `deals` adds a repository integration test (5) —
+**D-01 create at stage 1, D-02 link role, D-03 one contact = vendor on deal 1 + buyer on deal 2
+(validates D2), D-04 history-on-create, D-06 advance-writes-history, D-07 append-only (the app
+role's delete/update on stage_history is rejected)** — plus action unit tests (4). `properties`
+added validate (7) + actions (3) + integration (5); `contacts` validate (6) + actions (5) +
+integration (2); auth + platform + component tests as before.
 - Unit: smoke, platform/env (4), platform/tenancy (3), platform/profile (4), signup/validate (6),
   signup/actions (5), login/validate (3), login/actions (4), contacts/validate (5),
   contacts/actions (3).
@@ -44,7 +49,7 @@ Gates: `npm test` green, `npm run build` clean (TypeScript passes), `npm run lin
   `db:start`, `db:stop`, `db:reset`, `db:types`. `.env.test` holds the standard local demo keys
   (public, safe to commit); `vitest.setup.ts` loads it; `src/test/localSupabase.ts` gives
   service + anon test clients.
-- **Migrations** (`supabase/migrations/`, replayed cleanly 001→004 via `db reset`, verified):
+- **Migrations** (`supabase/migrations/`, 001→005; replay verified via `db reset`):
   - `001_schema.sql` — the base schema (moved verbatim from `shilpi_phase1_schema.sql`).
   - `002_handle_new_user.sql` — Option A signup trigger (SECURITY DEFINER): on new auth user,
     atomically creates the agency + principal `users` row from signup metadata. Keeps the
@@ -78,6 +83,15 @@ Gates: `npm test` green, `npm run build` clean (TypeScript passes), `npm run lin
   beds/baths/parking/land-size/zoning. UI list (P-02), create (P-01), view/edit (P-03) with a
   `PropertyForm` (type `<select>` + numeric inputs). No Phase-1 search (that's a later slice).
   Sidebar "Properties" is now a live link.
+- **`deals` module (D-01…D-08) — the spine.** Owns `deals`, `deal_contacts`, `deal_stages`,
+  `stage_history`. `index.ts` orchestrates create/advance and **hydrates board/detail views via
+  the `contacts`/`properties` interfaces** (`getContactsByIds`/`getPropertiesByIds` — added to
+  those modules) rather than SQL joins; the repository touches only deals' own tables.
+  **Migration 005** adds a DB trigger that writes `stage_history` on deal insert (null→1) and on
+  every stage change, and revokes write access so it's append-only (D-04/D-06/D-07). UI in
+  `src/app/(app)/deals/`: pipeline board (D-05, 13 stage columns, cards show address + primary
+  contact), create (D-01), detail (link contacts with roles D-02, advance stage D-06, stage
+  history timeline). All server-action forms — no client components. Nav "CRM pipeline" → `/deals`.
 
 ## Two latent schema bugs caught by integration testing
 Both existed in the original schema and would have bitten later; the live-DB tests surfaced them.
@@ -100,9 +114,15 @@ Flagging for the architect.
   db/auth/rest/kong).
 
 ## Schema changes from the spec
-- Restructured single `shilpi_phase1_schema.sql` → `supabase/migrations/001..004`.
-- Added `003_grants.sql` and `004_fix_current_agency_id_recursion.sql` (see above). Table
-  structure from the data model is unchanged; these are grants + a function-security fix.
+- Restructured single `shilpi_phase1_schema.sql` → `supabase/migrations/001..005`.
+- `003_grants.sql` and `004_fix_current_agency_id_recursion.sql` (see above) — grants +
+  function-security fix.
+- **`005_stage_history.sql`** — `record_stage_change` trigger (auto-writes `stage_history` on
+  deal insert + stage change) and `revoke insert/update/delete on stage_history from
+  anon, authenticated` (append-only). No table-structure change; this is behaviour the data model
+  intended ("stage_history — never updated, only inserted"), now enforced.
+- **Cloud parity note:** `005` is NOT yet applied to cloud — needed before `deals` works in prod
+  (alongside a `deals` deploy).
 
 ## Module boundary notes
 - Signup/login server actions live in the app routes and use `@/platform` only. No cross-module
@@ -120,6 +140,11 @@ Flagging for the architect.
   client (`next/headers`) and the build fails. `import type` is fine (erased). Fix: pass such
   values in as props from the server page. (`PropertyForm` gets `PROPERTY_TYPES` as a prop.)
   The build — not the tests — catches this, so `npm run build` stays part of every gate.
+- **`deals` respects "no cross-module SQL joins" (rule 3).** It needs property addresses + contact
+  names for board/detail, but its repository only queries deals' own four tables (deal_contacts is
+  embedded — intra-module). Property/contact data is fetched through the `properties`/`contacts`
+  interfaces (`getPropertiesByIds`/`getContactsByIds`) and merged in `index.ts`. Dependency stays
+  one-way (deals → contacts/properties); no cycle.
 
 ## Blockers / open questions
 - **db:types deferred** (Layer 3). `supabase gen types --local` spins up a `postgres-meta`
@@ -134,10 +159,11 @@ Flagging for the architect.
   after doing its work — cosmetic (the DB ends up correct); verified via psql each time.
 
 ## Next up
-- **`deals` module (D-01…D-08)** — the 13-stage spine. The big one: owns `deals`, `deal_contacts`
-  (links contacts with a role — this is where D2 pays off), `deal_stages`, `stage_history`
-  (append-only). Create a deal, link buyer/vendor contacts, render the pipeline board by stage,
-  advance stages. Depends on `contacts` + `properties` via their interfaces.
-- **A-03** — formalize RLS isolation as its own test (already largely proven).
-- Human: manual click-through to approve the built stories; the `properties` CRUD isn't yet
-  deployed to prod (I'll `vercel --prod` when you want it live); connect Vercel Git auto-deploy.
+- **Slice 1 exit criteria** — the build is done; what remains is: human **Approves** the stories,
+  manual click-through of the whole flow, and everything deployed. Then Slice 1 closes.
+- **Get `deals` working on prod** — deploy (`vercel --prod`) **and** apply migration `005` to the
+  cloud project (the trigger + append-only revoke), so the pipeline works live.
+- **A-03** — optionally formalize RLS isolation as its own dedicated test (already proven across
+  contacts/properties/deals integration tests).
+- Then **Slice 2 — Offers** (O-01…), or the deferred infra (Vercel Git auto-deploy, `db:types`,
+  CI, the layered instructions doc).
