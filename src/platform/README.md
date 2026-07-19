@@ -36,6 +36,11 @@ import {
 — importing it from the browser would break the build. This browser/server split is the one
 sanctioned exception to "import only from index.ts".
 
-Files: `env.ts`, `supabase/{server,browser}.ts`, `auth.ts`, `tenancy.ts`, `index.ts`.
+The **Edge proxy** (`src/proxy.ts`, Next 16's renamed middleware convention) imports
+`updateSession` from `@/platform/supabase/proxy` to refresh the auth session on every request —
+the mechanism that makes login sessions persist. Kept separate from the Node server client (it
+runs in the edge runtime and imports `next/server`, not `next/headers`).
+
+Files: `env.ts`, `supabase/{server,browser,proxy}.ts`, `auth.ts`, `tenancy.ts`, `index.ts`.
 Tests: `__tests__/{env,tenancy}.test.ts`. Logging is not built yet (added when a feature
 first needs it).

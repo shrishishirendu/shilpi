@@ -3,7 +3,7 @@
 import { useActionState } from "react";
 import Link from "next/link";
 import { signUpWithAgency, type SignUpState } from "./actions";
-import styles from "./signup.module.css";
+import styles from "../auth.module.css";
 
 const initialState: SignUpState = { error: null };
 
