@@ -135,3 +135,14 @@ export async function selectPropertiesByIds(
   if (error) throw new Error(error.message);
   return (data as PropertyRow[]).map(toProperty);
 }
+
+/** Count of the agency's properties (RLS-scoped). */
+export async function countPropertyRows(
+  supabase: SupabaseClient,
+): Promise<number> {
+  const { count, error } = await supabase
+    .from("properties")
+    .select("*", { count: "exact", head: true });
+  if (error) throw new Error(error.message);
+  return count ?? 0;
+}

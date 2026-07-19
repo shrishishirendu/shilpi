@@ -229,3 +229,20 @@ export async function selectStageHistory(
   if (error) throw new Error(error.message);
   return (data as HistoryRow[]).map(toHistory);
 }
+
+/** Active-deal count + total listing_price (RLS-scoped). For the dashboard. */
+export async function selectDealStats(
+  supabase: SupabaseClient,
+): Promise<{ activeDeals: number; pipelineValue: number }> {
+  const { data, error } = await supabase
+    .from("deals")
+    .select("listing_price")
+    .eq("status", "active");
+  if (error) throw new Error(error.message);
+  const rows = data as { listing_price: number | string | null }[];
+  const pipelineValue = rows.reduce(
+    (sum, r) => sum + (r.listing_price == null ? 0 : Number(r.listing_price)),
+    0,
+  );
+  return { activeDeals: rows.length, pipelineValue };
+}

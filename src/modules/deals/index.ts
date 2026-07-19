@@ -16,6 +16,7 @@ import { getPropertiesByIds, getProperty } from "@/modules/properties";
 import {
   insertDeal,
   insertDealContact,
+  selectDealStats,
   selectDealsWithLinks,
   selectDealWithLinks,
   selectStageHistory,
@@ -60,6 +61,15 @@ export async function createDeal(input: NewDeal = {}): Promise<Deal> {
 export async function listStages(): Promise<DealStage[]> {
   const supabase = await createServerSupabaseClient();
   return selectStages(supabase);
+}
+
+/** Dashboard stats: active deal count + total pipeline value. */
+export async function getDealStats(): Promise<{
+  activeDeals: number;
+  pipelineValue: number;
+}> {
+  const supabase = await createServerSupabaseClient();
+  return selectDealStats(supabase);
 }
 
 /** D-05 — board cards, hydrated with property address + primary contact name. */

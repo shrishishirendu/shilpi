@@ -63,3 +63,44 @@
   margin: 8px auto 0;
   line-height: 1.6;
 }
+
+.jumpCard {
+  background: #fff;
+  border: 1px solid var(--g200);
+  border-radius: 16px;
+  padding: 18px 20px;
+}
+
+.jumpTitle {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--g500);
+  margin-bottom: 12px;
+}
+
+.jumpLinks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.jumpLink {
+  display: inline-flex;
+  align-items: center;
+  height: 36px;
+  padding: 0 14px;
+  border: 1px solid var(--g200);
+  border-radius: 8px;
+  background: var(--g50);
+  color: var(--g700);
+  font-size: 13px;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.jumpLink:hover {
+  border-color: var(--blue-mid);
+  color: var(--blue);
+}

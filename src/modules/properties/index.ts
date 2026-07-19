@@ -9,6 +9,7 @@ import {
   selectProperties,
   selectPropertyById,
   selectPropertiesByIds,
+  countPropertyRows,
   updatePropertyById,
 } from "./internal/repository";
 import type { NewProperty, Property, PropertyUpdate } from "./internal/types";
@@ -42,6 +43,11 @@ export async function getProperty(id: string): Promise<Property | null> {
 export async function getPropertiesByIds(ids: string[]): Promise<Property[]> {
   const supabase = await createServerSupabaseClient();
   return selectPropertiesByIds(supabase, ids);
+}
+
+export async function countProperties(): Promise<number> {
+  const supabase = await createServerSupabaseClient();
+  return countPropertyRows(supabase);
 }
 
 export async function updateProperty(

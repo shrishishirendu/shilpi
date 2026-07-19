@@ -14,6 +14,7 @@ import {
   searchContactsByName,
   selectContactById,
   selectContactsByIds,
+  countContactRows,
   updateContactById,
 } from "./internal/repository";
 import type { Contact, ContactUpdate, NewContact } from "./internal/types";
@@ -46,6 +47,11 @@ export async function getContact(id: string): Promise<Contact | null> {
 export async function getContactsByIds(ids: string[]): Promise<Contact[]> {
   const supabase = await createServerSupabaseClient();
   return selectContactsByIds(supabase, ids);
+}
+
+export async function countContacts(): Promise<number> {
+  const supabase = await createServerSupabaseClient();
+  return countContactRows(supabase);
 }
 
 export async function updateContact(

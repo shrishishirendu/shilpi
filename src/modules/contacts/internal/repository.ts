@@ -138,3 +138,14 @@ export async function selectContactsByIds(
   if (error) throw new Error(error.message);
   return (data as ContactRow[]).map(toContact);
 }
+
+/** Count of the agency's contacts (RLS-scoped). */
+export async function countContactRows(
+  supabase: SupabaseClient,
+): Promise<number> {
+  const { count, error } = await supabase
+    .from("contacts")
+    .select("*", { count: "exact", head: true });
+  if (error) throw new Error(error.message);
+  return count ?? 0;
+}
