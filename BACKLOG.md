@@ -66,6 +66,7 @@ This number is what the human brings back to the architect chat. It's the honest
 | F-06 | `platform` module: db client, auth helper, tenancy resolver | `Ready` | The only global |
 | F-07 | `PROJECT_STATE.md` created in repo root | `Ready` | Template in requirements §9 |
 | F-08 | Deploy pipeline to Vercel — empty app live | `Backlog` | Prove the pipeline early |
+| F-11 | CI gate (suite on every push) + Vercel Git auto-deploy | `Ready` | **Immediate priority — before Slice 3.** Human connects repo→Vercel (dashboard); add `ci.yml` (setup-cli + `supabase db reset` + the test suite) |
 
 **Slice 0 done when:** schema is live, app connects, one test passes, empty app deploys.
 
@@ -190,13 +191,19 @@ This number is what the human brings back to the architect chat. It's the honest
 | ID | Story | State |
 |---|---|---|
 | Z-01 | DTO mode | `Backlog` |
-| Z-02 | Portal syndication (REA, Domain) | `Blocked` — needs API agreements |
+| Z-02 | Portal syndication — **Domain** (REA later) | **`Ready`** — Domain SANDBOX approved (Listings Mgmt, 500/day, Client Credentials). **Build AFTER Slice 3.** Production access is a separate later approval. |
 | Z-03 | Market data integration (CoreLogic/PropTrack) | `Blocked` — needs API agreement |
 | Z-04 | PEXA settlement integration | `Blocked` — needs API agreement |
 | Z-05 | Tier-2 agency dashboard | `Backlog` |
 | Z-06 | Tier-3 agent/owner views | `Backlog` |
 | Z-07 | Mobile app | `Backlog` |
 | Z-08 | Legal workspace + document vault | `Backlog` |
+
+> **Z-02 DoD (when built):** Domain lives behind a **narrow module interface** (like every external
+> dependency — no Domain SDK calls leaking into unrelated modules). The Client Credentials **secret
+> is server-side only** — env var, **never** `NEXT_PUBLIC_`, gitignored, never committed; **all
+> Domain calls are backend-only** (never from the browser). Honour Domain's caching / attribution /
+> display / rate-limit terms. Ship a boundary/interface test.
 
 ---
 
@@ -206,7 +213,7 @@ This number is what the human brings back to the architect chat. It's the honest
 |---|---|---|
 | PT-01 | IP Australia trademark search — "Shilpi", classes 9/42/36 | `Ready` |
 | PT-02 | Legal opinion — platform licensing, trust handling | `Ready` |
-| PT-03 | API talks: REA, Domain, CoreLogic, PEXA | `Ready` |
+| PT-03 | API talks: REA, Domain, CoreLogic, PEXA | Domain **sandbox approved** (2026-07-20); REA / CoreLogic / PropTrack / PEXA still pending |
 | PT-04 | Entity structure; build-to-sell vs operate | `Backlog` |
 | PT-05 | 1–2 beta agencies + 2 conveyancers committed | `Ready` |
 | PT-06 | Logo decision | `Backlog` |
@@ -219,3 +226,4 @@ This number is what the human brings back to the architect chat. It's the honest
 | Date | Change | By |
 |---|---|---|
 | Session 1 | Backlog created | Architect chat |
+| 2026-07-20 | Domain API **sandbox** approved (Listings Mgmt, 500/day, OAuth Client Credentials). Z-02 → `Ready` (build AFTER Slice 3; prod access separate). Added F-11 (CI gate + Vercel auto-deploy) as the immediate pre-Slice-3 priority. Build order unchanged: Compliance (Slice 3) next. | Architect + founder |

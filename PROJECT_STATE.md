@@ -1,5 +1,5 @@
 # Shilpi — Project State
-_Last updated: 2026-07-19 by Claude Code_
+_Last updated: 2026-07-20 by Claude Code_
 
 ## Current slice
 **Slice 2 — Offers: build complete.** The `offers` module (O-01…O-06) is built on top of a
@@ -123,6 +123,24 @@ Flagging for the architect.
 - Trimmed local services in `config.toml` to shrink the Docker pull (dev/test only need
   db/auth/rest/kong).
 
+## External integrations — Domain API (locked decision · 2026-07-20)
+Founder secured **Domain API SANDBOX** access (external track; no code this session). This makes
+the Domain listing integration *buildable and testable* against a real sandbox endpoint — but the
+**build order is unchanged: Compliance (Slice 3) is still next.** Domain is queued `Ready` (Z-02)
+for **after Slice 3** — the 500/day quota isn't going anywhere; don't context-switch to chase it.
+- Portal: Domain developer portal · project "Shilpi" · package **"Listings Management – Sandbox"** ·
+  Basic data map · **500 calls/day** · Status **Approved**.
+- Auth: **OAuth 2.0 Client Credentials** (server-to-server; app-level, not user-delegated — correct
+  for a backend data integration; not Authorization Code / Implicit).
+- Resources: `listings`, `enquiries`, `agents`, `agencies`, `listingProcessingReports`, `projects`.
+  Webhook owner types: `member`, `clientId`, `agency`, `provider`.
+- **Secret handling (non-negotiable — same rule as `service_role`):** server-side env var only,
+  **NEVER** `NEXT_PUBLIC_`, gitignored, never committed; **all Domain calls backend-only** (never
+  from the browser). Honour Domain's caching / attribution / display / rate-limit terms.
+- **When built (Z-02 DoD):** Domain behind a **narrow module interface** (no Domain SDK leaking into
+  unrelated modules), secret server-side + gitignored (verified), backend-only calls, + a
+  boundary/interface test. Production access is a separate later approval.
+
 ## Schema changes from the spec
 - Restructured single `shilpi_phase1_schema.sql` → `supabase/migrations/001..005`.
 - `003_grants.sql` and `004_fix_current_agency_id_recursion.sql` (see above) — grants +
@@ -131,15 +149,15 @@ Flagging for the architect.
   deal insert + stage change) and `revoke insert/update/delete on stage_history from
   anon, authenticated` (append-only). No table-structure change; this is behaviour the data model
   intended ("stage_history — never updated, only inserted"), now enforced.
-- **Cloud parity note:** `005` is NOT yet applied to cloud — needed before `deals` works in prod
-  (alongside a `deals` deploy).
+- **Cloud parity:** `002`–`005` are ALL applied to cloud now (human ran them). Signup, deals, and
+  offers all work in production.
 
 ## Module boundary notes
 - Signup/login server actions live in the app routes and use `@/platform` only. No cross-module
   table access. Boundaries hold.
-- The dashboard's stat cards are **static zeros**, not queried — the domain tables
-  (deals/contacts/properties) are owned by modules that don't exist yet, so we deliberately don't
-  reach into them. They get wired to real counts via those modules' interfaces later.
+- The dashboard's stat cards are now **wired to real counts** via the module interfaces
+  (`getDealStats`, `countContacts`, `countProperties`) — active deals + pipeline value + contact /
+  property counts. (They were static-zero placeholders until all the modules existed.)
 - `platform.getCurrentProfile()` reads `users` + `agencies` — both tenancy tables, which are
   platform's concern (not a domain module). Still no cycles; platform depends on no module.
 - **`contacts` sets the module pattern**: it owns `contacts`, depends only on `platform`, and
@@ -163,20 +181,23 @@ Flagging for the architect.
 - **db:types deferred** (Layer 3). `supabase gen types --local` spins up a `postgres-meta`
   Docker container whose image won't pull over this machine's flaky egress (it hangs). Not needed
   yet (the client is untyped; tests pass). Pull the image / retry when the network is stable.
-- **Cloud parity (now also gates prod signup)**: the cloud project has only the base schema.
-  Before signup works on cloud (and on the live Vercel app), apply `002`, `003`, `004` there and
-  turn email confirmation OFF for Phase 1 (Auth settings).
-- **Vercel Git auto-deploy** — human: connect the repo in the Vercel dashboard (the CLI
-  `git connect` needs the Vercel GitHub App installed first).
+- **Cloud is at parity** — migrations `002`–`005` applied, email confirmation off; signup / deals /
+  offers all work in prod. Harmless leftover: two `public.handle_new_user` overloads on cloud (one
+  trigger fires the right one) — tidy later.
+- **Vercel Git auto-deploy — still NOT connected.** A push does not trigger a deploy; I'm running
+  `vercel --prod` by hand. Human: connect the repo in the Vercel dashboard (installs the Vercel
+  GitHub App). This is part of **F-11**, the immediate pre-Slice-3 priority.
 - The Supabase CLI (`db reset`, `gen types`, `init`) hangs on a telemetry call on this machine
   after doing its work — cosmetic (the DB ends up correct); verified via psql each time.
 
-## Next up
-- **Offers to prod** — just a deploy. Offers uses the existing `offers` table (already in `001`),
-  so **no new cloud migration is needed** (unlike `deals`/`005`). `deals`+`005` are already on cloud.
-- **Slice 3 — Compliance (X-01…)** ⚠️ — the deterministic compliance layer (cooling-off, stamp
-  duty, finance deadlines). **Requires human + solicitor verification of the LOGIC**, not just green
-  tests (decision D3). Pause and confirm before shipping any of it.
-- **Deferred infra** — Vercel Git auto-deploy (human dashboard step), CI (`ci.yml`), `db:types`,
-  the layered instructions doc.
-- Human: formally **Approve** the built stories to close Slices 1 & 2.
+## Next up (order set by the architect, 2026-07-20)
+1. **F-11 — CI gate + Vercel Git auto-deploy** (immediate priority, *before* Slice 3). Human
+   connects repo→Vercel in the dashboard; add `ci.yml` (setup-cli + `supabase db reset` + the suite)
+   so the 94 tests run on every push now that the surface is sizeable.
+2. **Slice 3 — Compliance (X-01…X-08)** ⚠️ — deterministic, never-AI, pure functions with the legal
+   basis in comments + an audit trail (D3). Time-sensitive (AML Tranche 2 in effect). Build the
+   calculators + exhaustive boundary tests, then **STOP for human + solicitor review before
+   shipping**. **X-09 (solicitor review) stays `Blocked`** until the founder's legal opinion lands.
+3. **Domain integration (Z-02)** — `Ready`, built **AFTER** Slice 3 (sandbox; see the Domain
+   decision record above). Don't start it early.
+- Human: connect Vercel Git; formally **Approve** the built stories to close Slices 1 & 2.
